@@ -21,7 +21,7 @@ class ListItemExits extends ListRecords
         return [
             Actions\CreateAction::make()
                 ->modalHeading('Tambah Barang Keluar')
-                ->modalWidth('sm')
+                ->modalWidth('md')
 
                 ->before(function (array $data) {
                     // Attempt to find the item by name

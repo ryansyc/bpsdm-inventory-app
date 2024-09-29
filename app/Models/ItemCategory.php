@@ -14,6 +14,6 @@ class ItemCategory extends Model
     // Define the relationship with Item
     public function items()
     {
-        return $this->hasMany(Item::class);
+        return $this->hasMany(Item::class, 'category_id');
     }
 }

@@ -30,26 +30,25 @@ class ItemResource extends Resource
         return $form
             ->columns(1)
             ->schema([
-                Forms\Components\Section::make()
-                    ->columns(2)
-                    ->schema([
-                        Forms\Components\TextInput::make('name')
-                            ->label('Nama Barang')
-                            ->required()
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('quantity')
-                            ->label('Jumlah')
-                            ->required()
-                            ->numeric(),
-                        Forms\Components\Select::make('category_id')
-                            ->label('Kategori')
-                            ->required()
-                            ->relationship('category', 'name'),
-                        Forms\Components\TextInput::make('description')
-                            ->label('Deskripsi')
-                            ->required()
-                            ->maxLength(255),
-                    ]),
+                Forms\Components\TextInput::make('name')
+                    ->label('Nama Barang')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\Select::make('category_id')
+                    ->label('Kategori')
+                    ->required()
+                    ->relationship('category', 'name')
+                    ->native(false),
+                Forms\Components\TextInput::make('quantity')
+                    ->label('Jumlah')
+                    ->required()
+                    ->numeric()
+                    ->disabledOn('edit'),
+                Forms\Components\TextInput::make('description')
+                    ->label('Deskripsi')
+                    ->required()
+                    ->maxLength(255)
+                    ->hiddenOn('edit'),
             ]);
     }
 
@@ -74,25 +73,28 @@ class ItemResource extends Resource
                     ->numeric()
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                // Tables\Columns\TextColumn::make('created_at')
+                //     ->dateTime()
+                //     ->sortable()
+                //     ->toggleable(isToggledHiddenByDefault: true),
+                // Tables\Columns\TextColumn::make('updated_at')
+                //     ->dateTime()
+                //     ->sortable()
+                //     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->color('warning')
+                    ->modalHeading('Ubah Barang')
+                    ->modalWidth('md'),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                // Tables\Actions\BulkActionGroup::make([
+                //     Tables\Actions\DeleteBulkAction::make(),
+                // ]),
             ]);
     }
 
@@ -107,8 +109,8 @@ class ItemResource extends Resource
     {
         return [
             'index' => Pages\ListItems::route('/'),
-            'create' => Pages\CreateItem::route('/create'),
-            'edit' => Pages\EditItem::route('/{record}/edit'),
+            // 'create' => Pages\CreateItem::route('/create'),
+            // 'edit' => Pages\EditItem::route('/{record}/edit'),
         ];
     }
 }

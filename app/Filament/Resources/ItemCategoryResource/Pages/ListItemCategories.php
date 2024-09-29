@@ -13,7 +13,9 @@ class ListItemCategories extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->modalHeading('Tambah Kategori Barang')
+                ->modalWidth('md'),
         ];
     }
 }

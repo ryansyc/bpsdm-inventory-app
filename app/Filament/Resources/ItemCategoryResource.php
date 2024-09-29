@@ -10,6 +10,8 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -28,6 +30,7 @@ class ItemCategoryResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
+            ->columns(1)
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->label('Nama')
@@ -49,27 +52,53 @@ class ItemCategoryResource extends Resource
                     ->alignLeft()
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                // Tables\Columns\TextColumn::make('created_at')
+                //     ->dateTime()
+                //     ->sortable()
+                //     ->toggleable(isToggledHiddenByDefault: true),
+                // Tables\Columns\TextColumn::make('updated_at')
+                //     ->dateTime()
+                //     ->sortable()
+                //     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->color('warning'),
-                Tables\Actions\DeleteAction::make(),
+                    ->color('warning')
+                    ->modalHeading('Ubah Kategori Barang')
+                    ->modalWidth('md'),
+
+                Tables\Actions\DeleteAction::make()
+                    ->modalHeading('Hapus Kategori Barang')
+                    ->action(function (ItemCategory $record) {
+                        // Check for associated items before deleting
+                        if ($record->items()->count() > 0) {
+                            Notification::make()
+                                ->danger()
+                                ->title('Tidak dapat menghapus kategori')
+                                ->body('Masih ada barang yang menggunakannya')
+                                ->send();
+
+                            return;
+                        }
+
+                        // Proceed to delete the record
+                        $record->delete();
+
+                        // Send success notification
+                        Notification::make()
+                            ->success()
+                            ->title('Kategori berhasil dihapus.')
+                            ->send();
+                    })
             ])
+
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                // Tables\Actions\BulkActionGroup::make([
+                //     Tables\Actions\DeleteBulkAction::make(),
+                // ]),
             ]);
     }
 
@@ -84,8 +113,8 @@ class ItemCategoryResource extends Resource
     {
         return [
             'index' => Pages\ListItemCategories::route('/'),
-            'create' => Pages\CreateItemCategory::route('/create'),
-            'edit' => Pages\EditItemCategory::route('/{record}/edit'),
+            // 'create' => Pages\CreateItemCategory::route('/create'),
+            // 'edit' => Pages\EditItemCategory::route('/{record}/edit'),
         ];
     }
 }

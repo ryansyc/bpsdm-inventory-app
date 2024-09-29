@@ -21,7 +21,7 @@ class ListItemEntries extends ListRecords
         return [
             Actions\CreateAction::make()
                 ->modalHeading('Tambah Barang Masuk')
-                ->modalWidth('sm')
+                ->modalWidth('md')
 
                 ->before(function (array $data) {
                     // Attempt to find the item by name

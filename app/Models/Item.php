@@ -18,18 +18,18 @@ class Item extends Model
     // Define the relationship with ItemCategory
     public function category()
     {
-        return $this->belongsTo(ItemCategory::class);
+        return $this->belongsTo(ItemCategory::class, 'category_id');
     }
 
     // Define the relationship with ItemEntry
     public function entries()
     {
-        return $this->hasMany(ItemEntry::class);
+        return $this->hasMany(ItemEntry::class, 'item_id');
     }
 
     // Define the relationship with ItemExit
     public function exits()
     {
-        return $this->hasMany(ItemExit::class);
+        return $this->hasMany(ItemExit::class, 'item_id');
     }
 }
