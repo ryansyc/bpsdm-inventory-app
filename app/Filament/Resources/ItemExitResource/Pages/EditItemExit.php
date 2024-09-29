@@ -10,6 +10,8 @@ class EditItemExit extends EditRecord
 {
     protected static string $resource = ItemExitResource::class;
 
+    protected ?string $heading = 'Ubah Barang Keluar';
+
     protected function getHeaderActions(): array
     {
         return [

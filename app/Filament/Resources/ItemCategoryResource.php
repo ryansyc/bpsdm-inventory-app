@@ -19,9 +19,9 @@ class ItemCategoryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $slug = 'kategori-item';
+    protected static ?string $slug = 'kategori-barang';
 
-    protected static ?string $pluralModelLabel = 'kategori item';
+    protected static ?string $pluralModelLabel = 'kategori barang';
 
     protected static ?int $navigationSort = 4;
 
@@ -40,8 +40,15 @@ class ItemCategoryResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('No')
+                    ->rowIndex()
+                    ->alignCenter()
+                    ->width('60px'),
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                    ->label('Nama Kategori')
+                    ->alignLeft()
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -55,7 +62,9 @@ class ItemCategoryResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->color('warning'),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

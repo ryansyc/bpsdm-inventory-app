@@ -10,6 +10,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -19,19 +20,27 @@ class ItemExitResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $slug = 'barang-keluar';
+
+    protected static ?string $pluralModelLabel = 'barang keluar';
+
+    protected static ?int $navigationSort = 3;
+
     public static function form(Form $form): Form
     {
         return $form
+            ->columns(1)
             ->schema([
-                Forms\Components\DatePicker::make('exit_date')
-                    ->required(),
-                Forms\Components\TextInput::make('item_id')
+                Forms\Components\TextInput::make('name')
+                    ->label('Nama Barang')
                     ->required()
-                    ->numeric(),
+                    ->maxLength(255),
                 Forms\Components\TextInput::make('quantity')
+                    ->label('Jumlah')
                     ->required()
                     ->numeric(),
                 Forms\Components\TextInput::make('description')
+                    ->label('Deskripsi')
                     ->required()
                     ->maxLength(255),
             ]);
@@ -40,18 +49,31 @@ class ItemExitResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('exit_date', 'desc')
             ->columns([
+                Tables\Columns\TextColumn::make('No')
+                    ->rowIndex()
+                    ->alignCenter()
+                    ->width('60px'),
                 Tables\Columns\TextColumn::make('exit_date')
-                    ->date()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('item_id')
-                    ->numeric()
+                    ->label('Tanggal Keluar')
+                    ->dateTime()
+                    ->searchable()
+                    ->sortable()
+                    ->formatStateUsing(fn($state) => Carbon::parse($state)->format('Y-m-d | H:i:s')),
+                Tables\Columns\TextColumn::make('item.name')
+                    ->label('Nama Barang')
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('quantity')
+                    ->label('Jumlah')
                     ->numeric()
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('description')
-                    ->searchable(),
+                    ->label('Deskripsi')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -64,9 +86,7 @@ class ItemExitResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
+            ->actions([])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
@@ -85,8 +105,8 @@ class ItemExitResource extends Resource
     {
         return [
             'index' => Pages\ListItemExits::route('/'),
-            'create' => Pages\CreateItemExit::route('/create'),
-            'edit' => Pages\EditItemExit::route('/{record}/edit'),
+            // 'create' => Pages\CreateItemExit::route('/create'),
+            // 'edit' => Pages\EditItemExit::route('/{record}/edit'),
         ];
     }
 }

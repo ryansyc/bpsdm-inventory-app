@@ -10,6 +10,8 @@ class EditItem extends EditRecord
 {
     protected static string $resource = ItemResource::class;
 
+    protected ?string $heading = 'Ubah Stok Barang';
+
     protected function getHeaderActions(): array
     {
         return [

@@ -9,4 +9,6 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateItemCategory extends CreateRecord
 {
     protected static string $resource = ItemCategoryResource::class;
+
+    protected ?string $heading = 'Tambah Kategori Barang';
 }

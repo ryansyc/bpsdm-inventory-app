@@ -19,20 +19,37 @@ class ItemResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $slug = 'stok-barang';
+
+    protected static ?string $pluralModelLabel = 'stok barang';
+
+    protected static ?int $navigationSort = 1;
+
     public static function form(Form $form): Form
     {
         return $form
+            ->columns(1)
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('category_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('quantity')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
+                Forms\Components\Section::make()
+                    ->columns(2)
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Nama Barang')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('quantity')
+                            ->label('Jumlah')
+                            ->required()
+                            ->numeric(),
+                        Forms\Components\Select::make('category_id')
+                            ->label('Kategori')
+                            ->required()
+                            ->relationship('category', 'name'),
+                        Forms\Components\TextInput::make('description')
+                            ->label('Deskripsi')
+                            ->required()
+                            ->maxLength(255),
+                    ]),
             ]);
     }
 
@@ -40,14 +57,23 @@ class ItemResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('No')
+                    ->rowIndex()
+                    ->alignCenter()
+                    ->width('60px'),
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('category_id')
-                    ->numeric()
+                    ->label('Nama Barang')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('category.name')
+                    ->label('Kategori')
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('quantity')
+                    ->label('Jumlah')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
