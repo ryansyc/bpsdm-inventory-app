@@ -29,24 +29,20 @@ class ItemEntryResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->columns(2)
+            ->columns(1)
             ->schema([
-                Forms\Components\Section::make()
-                    ->columnSpan(1)
-                    ->schema([
-                        Forms\Components\TextInput::make('name')
-                            ->label('Nama Barang')
-                            ->required()
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('quantity')
-                            ->label('Jumlah')
-                            ->required()
-                            ->numeric(),
-                        Forms\Components\TextInput::make('description')
-                            ->label('Deskripsi')
-                            ->required()
-                            ->maxLength(255),
-                    ]),
+                Forms\Components\TextInput::make('name')
+                    ->label('Nama Barang')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('quantity')
+                    ->label('Jumlah')
+                    ->required()
+                    ->numeric(),
+                Forms\Components\TextInput::make('description')
+                    ->label('Deskripsi')
+                    ->required()
+                    ->maxLength(255),
             ]);
     }
 
@@ -78,23 +74,23 @@ class ItemEntryResource extends Resource
                     ->label('Deskripsi')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                // Tables\Columns\TextColumn::make('created_at')
+                //     ->dateTime()
+                //     ->sortable()
+                //     ->toggleable(isToggledHiddenByDefault: true),
+                // Tables\Columns\TextColumn::make('updated_at')
+                //     ->dateTime()
+                //     ->sortable()
+                //     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
             ])
             ->actions([])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                // Tables\Actions\BulkActionGroup::make([
+                //     Tables\Actions\DeleteBulkAction::make(),
+                // ]),
             ]);
     }
 
@@ -109,8 +105,8 @@ class ItemEntryResource extends Resource
     {
         return [
             'index' => Pages\ListItemEntries::route('/'),
-            'create' => Pages\CreateItemEntry::route('/create'),
-            'edit' => Pages\EditItemEntry::route('/{record}/edit'),
+            // 'create' => Pages\CreateItemEntry::route('/create'),
+            // 'edit' => Pages\EditItemEntry::route('/{record}/edit'),
         ];
     }
 }
