@@ -10,7 +10,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -18,7 +17,7 @@ class ItemExitResource extends Resource
 {
     protected static ?string $model = ItemExit::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-s-arrow-up-tray';
 
     protected static ?string $slug = 'barang-keluar';
 
@@ -38,6 +37,7 @@ class ItemExitResource extends Resource
                 Forms\Components\TextInput::make('quantity')
                     ->label('Jumlah')
                     ->required()
+                    ->minValue(0)
                     ->numeric(),
                 Forms\Components\TextInput::make('description')
                     ->label('Deskripsi')
@@ -57,10 +57,9 @@ class ItemExitResource extends Resource
                     ->width('60px'),
                 Tables\Columns\TextColumn::make('exit_date')
                     ->label('Tanggal Keluar')
-                    ->dateTime()
+                    ->dateTime('Y-m-d | H:i:s')
                     ->searchable()
-                    ->sortable()
-                    ->formatStateUsing(fn($state) => Carbon::parse($state)->format('Y-m-d | H:i:s')),
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('item.name')
                     ->label('Nama Barang')
                     ->searchable()

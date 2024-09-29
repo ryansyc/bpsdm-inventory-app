@@ -10,7 +10,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -18,7 +17,7 @@ class ItemEntryResource extends Resource
 {
     protected static ?string $model = ItemEntry::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-s-arrow-down-tray';
 
     protected static ?string $slug = 'barang-masuk';
 
@@ -38,6 +37,7 @@ class ItemEntryResource extends Resource
                 Forms\Components\TextInput::make('quantity')
                     ->label('Jumlah')
                     ->required()
+                    ->minValue(0)
                     ->numeric(),
                 Forms\Components\TextInput::make('description')
                     ->label('Deskripsi')
@@ -57,10 +57,9 @@ class ItemEntryResource extends Resource
                     ->width('60px'),
                 Tables\Columns\TextColumn::make('entry_date')
                     ->label('Tanggal Masuk')
-                    ->dateTime()
+                    ->dateTime('Y-m-d | H:i:s')
                     ->searchable()
-                    ->sortable()
-                    ->formatStateUsing(fn($state) => Carbon::parse($state)->format('Y-m-d | H:i:s')),
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('item.name')
                     ->label('Nama Barang')
                     ->searchable()

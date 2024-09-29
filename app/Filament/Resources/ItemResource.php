@@ -17,7 +17,7 @@ class ItemResource extends Resource
 {
     protected static ?string $model = Item::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-s-cube';
 
     protected static ?string $slug = 'stok-barang';
 
@@ -43,6 +43,7 @@ class ItemResource extends Resource
                     ->label('Jumlah')
                     ->required()
                     ->numeric()
+                    ->minValue(0)
                     ->disabledOn('edit'),
                 Forms\Components\TextInput::make('description')
                     ->label('Deskripsi')
@@ -71,16 +72,18 @@ class ItemResource extends Resource
                 Tables\Columns\TextColumn::make('quantity')
                     ->label('Jumlah')
                     ->numeric()
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime('Y-m-d | H:i:s')
+                    ->searchable()
                     ->sortable()
-                    ->searchable(),
-                // Tables\Columns\TextColumn::make('created_at')
-                //     ->dateTime()
-                //     ->sortable()
-                //     ->toggleable(isToggledHiddenByDefault: true),
-                // Tables\Columns\TextColumn::make('updated_at')
-                //     ->dateTime()
-                //     ->sortable()
-                //     ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime('Y-m-d | H:i:s')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
