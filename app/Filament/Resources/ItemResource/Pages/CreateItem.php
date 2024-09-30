@@ -4,8 +4,6 @@ namespace App\Filament\Resources\ItemResource\Pages;
 
 use App\Filament\Resources\ItemResource;
 use Filament\Actions;
-use App\Models\Item;
-use App\Models\ItemEntry;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 

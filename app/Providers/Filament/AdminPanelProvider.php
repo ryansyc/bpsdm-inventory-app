@@ -29,8 +29,8 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->colors([
                 // 'primary' => Color::hex('#006799'),
-                // 'primary' => Color::hex('#00AFEF'),
                 'primary' => Color::hex('#027D3D'),
+                'secondary' => Color::hex('#00AFEF'),
                 // 'primary' => Color::hex('#FCC134'),
 
             ])
@@ -67,6 +67,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->brandLogo(asset('images/bpsdm.png'))
             ->brandLogoHeight('2.5rem')
-            ->spa();
+            ->spa()
+            ->databaseNotifications();
     }
 }
