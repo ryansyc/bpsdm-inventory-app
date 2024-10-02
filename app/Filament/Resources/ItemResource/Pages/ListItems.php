@@ -8,6 +8,9 @@ use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Item;
 use App\Models\ItemEntry;
+use pxlrbt\FilamentExcel\Columns\Column;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
+use pxlrbt\FilamentExcel\Actions\Pages\ExportAction;
 
 class ListItems extends ListRecords
 {
@@ -42,7 +45,22 @@ class ListItems extends ListRecords
                     ]);
 
                     return $item; // Return the created item
-                })
+                }),
+
+            ExportAction::make()
+                ->label('Export')
+                ->exports([
+                    ExcelExport::make('table')
+                        ->withFilename(date('Y-m-d') . ' - Stok Barang')
+                        ->withColumns([
+                            Column::make('name')
+                                ->heading('Nama Barang'),
+                            Column::make('category.name')
+                                ->heading('Kategori'),
+                            Column::make('quantity')
+                                ->heading('Jumlah'),
+                        ])
+                ]),
         ];
     }
 }

@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Item;
 use App\Models\ItemEntry;
 use Filament\Notifications\Notification;
+use pxlrbt\FilamentExcel\Columns\Column;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
+use pxlrbt\FilamentExcel\Actions\Pages\ExportAction;
 
 class ListItemEntries extends ListRecords
 {
@@ -63,6 +66,22 @@ class ListItemEntries extends ListRecords
                         'description' => $data['description'],
                     ]);
                 }),
+            ExportAction::make()
+                ->label('Export')
+                ->exports([
+                    ExcelExport::make('table')
+                        ->withFilename(date('Y-m-d') . ' - Barang Masuk')
+                        ->withColumns([
+                            Column::make('entry_date')
+                                ->heading('Tanggal Masuk'),
+                            Column::make('item.name')
+                                ->heading('Nama Barang'),
+                            Column::make('quantity')
+                                ->heading('Jumlah'),
+                            Column::make('description')
+                                ->heading('Deskripsi'),
+                        ])
+                ]),
         ];
     }
 }

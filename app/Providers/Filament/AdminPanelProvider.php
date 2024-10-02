@@ -67,7 +67,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->brandLogo(asset('images/bpsdm.png'))
             ->brandLogoHeight('2.5rem')
-            ->spa()
-            ->databaseNotifications();
+            ->spa();
+        // ->databaseNotifications();
     }
 }
