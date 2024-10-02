@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\ItemCategory;
 use App\Models\Item;
+use App\Models\ItemEntry;
 
 class DatabaseSeeder extends Seeder
 {
@@ -89,6 +90,41 @@ class DatabaseSeeder extends Seeder
             'category_id' => 5, // Kitchenware
             'quantity' => 8,
             'user_id' => 1,
+        ]);
+
+        ItemEntry::create([
+            'entry_date' => now(),
+            'item_id' => 1,
+            'quantity' => 10,
+            'description' => 'Andi'
+        ]);
+
+        ItemEntry::create([
+            'entry_date' => now(),
+            'item_id' => 2,
+            'quantity' => 5,
+            'description' => 'Budi'
+        ]);
+
+        ItemEntry::create([
+            'entry_date' => now(),
+            'item_id' => 3,
+            'quantity' => 20,
+            'description' => 'Caca'
+        ]);
+
+        ItemEntry::create([
+            'entry_date' => now(),
+            'item_id' => 4,
+            'quantity' => 15,
+            'description' => 'Dedi'
+        ]);
+
+        ItemEntry::create([
+            'entry_date' => now(),
+            'item_id' => 5,
+            'quantity' => 8,
+            'description' => 'Eko'
         ]);
     }
 }
