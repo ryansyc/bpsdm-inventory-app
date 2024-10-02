@@ -8,9 +8,11 @@ use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Item;
 use App\Models\ItemEntry;
+use Illuminate\Support\Facades\Auth;
 use pxlrbt\FilamentExcel\Columns\Column;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
 use pxlrbt\FilamentExcel\Actions\Pages\ExportAction;
+
 
 class ListItems extends ListRecords
 {
@@ -24,7 +26,8 @@ class ListItems extends ListRecords
                 ->modalWidth('md')
 
                 ->mutateFormDataUsing(function (array $data): array {
-                    $data['entry_date'] = now(); // Set exit date
+                    $data['entry_date'] = now();
+                    $data['user_id'] = Auth::id();
                     return $data;
                 })
 
@@ -34,6 +37,7 @@ class ListItems extends ListRecords
                         'name' => $data['name'],
                         'quantity' => $data['quantity'],
                         'category_id' => $data['category_id'],
+                        'user_id' => $data['user_id'],
                     ]);
 
                     // Create the item entry record

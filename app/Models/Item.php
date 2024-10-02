@@ -12,13 +12,20 @@ class Item extends Model
     protected $fillable = [
         'name',
         'category_id',
-        'quantity'
+        'quantity',
+        'user_id',
     ];
 
     // Define the relationship with ItemCategory
     public function category()
     {
         return $this->belongsTo(ItemCategory::class, 'category_id');
+    }
+
+    // Define the relationship with User
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     // Define the relationship with ItemEntry

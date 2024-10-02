@@ -30,19 +30,38 @@ class ItemExitResource extends Resource
         return $form
             ->columns(1)
             ->schema([
-                Forms\Components\TextInput::make('name')
+                Forms\Components\Select::make('name')
                     ->label('Nama Barang')
-                    ->required()
-                    ->maxLength(255),
+                    ->relationship('item', 'name')
+                    ->required(),
                 Forms\Components\TextInput::make('quantity')
                     ->label('Jumlah')
                     ->required()
                     ->minValue(0)
                     ->numeric(),
-                Forms\Components\TextInput::make('description')
-                    ->label('Deskripsi')
+                Forms\Components\Radio::make('selection')
+                    ->label('Choose an option')
+                    ->options([
+                        1 => 'Grup',
+                        0 => 'Orang',
+                    ])
                     ->required()
-                    ->maxLength(255),
+                    ->reactive(),
+
+                Forms\Components\Select::make('selection_box')
+                    ->label('Select an Item')
+                    ->options([
+                        'item1' => 'Item 1',
+                        'item2' => 'Item 2',
+                        'item3' => 'Item 3',
+                    ])
+                    ->required()
+                    ->visible(fn(callable $get) => $get('selection') === 1),
+
+                Forms\Components\TextInput::make('input_text')
+                    ->label('Input Text')
+                    ->required()
+                    ->visible(fn(callable $get) => $get('selection') === 0),
             ]);
     }
 

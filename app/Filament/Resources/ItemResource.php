@@ -5,11 +5,13 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ItemResource\Pages;
 use App\Filament\Resources\ItemResource\RelationManagers;
 use App\Models\Item;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -45,9 +47,16 @@ class ItemResource extends Resource
                     ->numeric()
                     ->minValue(0)
                     ->disabledOn('edit'),
-                Forms\Components\TextInput::make('description')
-                    ->label('Deskripsi')
+                Forms\Components\Radio::make('selection')
+                    ->label('Choose an option')
+                    ->options([
+                        1 => 'Grup',
+                        0 => 'Orang',
+                    ])
                     ->required()
+                    ->reactive(),
+                Forms\Components\TextInput::make('receiver')
+                    ->label('Deskripsi')
                     ->maxLength(255)
                     ->hiddenOn('edit'),
             ]);
@@ -56,6 +65,8 @@ class ItemResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->recordUrl(null)
+            ->recordAction(null)
             ->columns([
                 Tables\Columns\TextColumn::make('No')
                     ->rowIndex()
@@ -74,6 +85,10 @@ class ItemResource extends Resource
                     ->numeric()
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Gudang')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime('Y-m-d | H:i:s')
                     ->searchable()
@@ -86,7 +101,9 @@ class ItemResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('warehouse')
+                    ->options(User::all()->pluck('name', 'id'))
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
