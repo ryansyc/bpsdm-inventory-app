@@ -14,10 +14,16 @@ class ItemExit extends Model
         'item_id',
         'quantity',
         'description',
+        'user_id',
     ];
 
     public function item()
     {
         return $this->belongsTo(Item::class, 'item_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

@@ -6,12 +6,15 @@ use App\Filament\Resources\ItemExitResource\Pages;
 use App\Filament\Resources\ItemExitResource\RelationManagers;
 use App\Models\ItemExit;
 use App\Models\User;
+use App\Models\Item;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ItemExitResource extends Resource
@@ -31,11 +34,19 @@ class ItemExitResource extends Resource
         return $form
             ->columns(1)
             ->schema([
-                Forms\Components\Select::make('name')
-                    ->label('Nama Barang')
-                    ->relationship('item', 'name')
+                Forms\Components\Select::make('code')
+                    ->label('Kode Barang')
+                    ->options(Item::where('user_id', Auth::id())->pluck('code', 'code'))
                     ->placeholder('-')
-                    ->required(),
+                    ->required()
+                    ->live()
+                    ->afterStateUpdated(function (Set $set, $state) {
+                        $set('name', Item::where('code', $state)->pluck('name')->first());
+                    }),
+                Forms\Components\TextInput::make('name')
+                    ->label('Nama Barang')
+                    ->required()
+                    ->maxLength(255),
 
                 Forms\Components\TextInput::make('quantity')
                     ->label('Jumlah')
@@ -55,7 +66,7 @@ class ItemExitResource extends Resource
 
                 Forms\Components\Select::make('description')
                     ->label('Pilih Gudang')
-                    ->options(User::all()->pluck('name', 'id'))
+                    ->options(User::where('id', '!=', 1)->pluck('name', 'id'))
                     ->placeholder('-')
                     ->required()
                     ->visible(function (Forms\Get $get) {
@@ -98,15 +109,18 @@ class ItemExitResource extends Resource
                     ->label('Deskripsi')
                     ->searchable()
                     ->sortable(),
-                // Tables\Columns\TextColumn::make('created_at')
-                //     ->dateTime()
-                //     ->sortable()
-                //     ->toggleable(isToggledHiddenByDefault: true),
-                // Tables\Columns\TextColumn::make('updated_at')
-                //     ->dateTime()
-                //     ->sortable()
-                //     ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->modifyQueryUsing(function (Builder $query) {
+                return $query->where('user_id', Auth::id());
+            })
             ->filters([
                 //
             ])

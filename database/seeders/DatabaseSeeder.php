@@ -61,6 +61,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Item::create([
+            'code' => 'ABC123',
             'name' => 'Laptop',
             'category_id' => 1,
             'quantity' => 10,
@@ -68,6 +69,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Item::create([
+            'code' => 'DEF456',
             'name' => 'Sofa',
             'category_id' => 2, // Furniture
             'quantity' => 5,
@@ -75,6 +77,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Item::create([
+            'code' => 'GHI789',
             'name' => 'T-shirt',
             'category_id' => 3, // Clothing
             'quantity' => 20,
@@ -82,6 +85,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Item::create([
+            'code' => 'JKL012',
             'name' => 'Novel',
             'category_id' => 4, // Books
             'quantity' => 15,
@@ -89,6 +93,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Item::create([
+            'code' => 'MNO345',
             'name' => 'Cookware Set',
             'category_id' => 5, // Kitchenware
             'quantity' => 8,
@@ -99,35 +104,40 @@ class DatabaseSeeder extends Seeder
             'entry_date' => now(),
             'item_id' => 1,
             'quantity' => 10,
-            'description' => 'Andi'
+            'description' => 'Andi',
+            'user_id' => 1
         ]);
 
         ItemEntry::create([
             'entry_date' => now(),
             'item_id' => 2,
             'quantity' => 5,
-            'description' => 'Budi'
+            'description' => 'Budi',
+            'user_id' => 1
         ]);
 
         ItemEntry::create([
             'entry_date' => now(),
             'item_id' => 3,
             'quantity' => 20,
-            'description' => 'Caca'
+            'description' => 'Caca',
+            'user_id' => 1
         ]);
 
         ItemEntry::create([
             'entry_date' => now(),
             'item_id' => 4,
             'quantity' => 15,
-            'description' => 'Dedi'
+            'description' => 'Dedi',
+            'user_id' => 1
         ]);
 
         ItemEntry::create([
             'entry_date' => now(),
             'item_id' => 5,
             'quantity' => 8,
-            'description' => 'Eko'
+            'description' => 'Eko',
+            'user_id' => 1
         ]);
     }
 }

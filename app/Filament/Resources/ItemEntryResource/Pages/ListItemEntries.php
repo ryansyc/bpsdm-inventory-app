@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Item;
 use App\Models\ItemEntry;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Auth;
 use pxlrbt\FilamentExcel\Columns\Column;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
 use pxlrbt\FilamentExcel\Actions\Pages\ExportAction;
@@ -28,7 +29,7 @@ class ListItemEntries extends ListRecords
 
                 ->before(function (array $data) {
                     // Attempt to find the item by name, only select 'id' and 'quantity' for efficiency
-                    $item = Item::where('id', $data['name'])->select('id', 'quantity')->first();
+                    $item = Item::where('name', $data['name'])->select('id', 'quantity')->first();
 
                     if (!$item) {
                         // Item not found, show a notification and halt
@@ -54,7 +55,7 @@ class ListItemEntries extends ListRecords
                 // Handle the actual record creation
                 ->using(function (array $data): Model {
                     // Use efficient increment method to update quantity directly
-                    Item::where('id', $this->item->id)->increment('quantity', $data['quantity']);
+                    $this->item->increment('quantity', $data['quantity']);
 
                     // Create item entry without reloading the `Item` model
                     return ItemEntry::create([
@@ -62,6 +63,7 @@ class ListItemEntries extends ListRecords
                         'quantity'   => $data['quantity'],
                         'entry_date' => $data['entry_date'],
                         'description' => $data['description'],
+                        'user_id'    => Auth::id(),
                     ]);
                 }),
 

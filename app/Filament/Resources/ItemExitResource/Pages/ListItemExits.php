@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Item;
 use App\Models\ItemExit;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Auth;
 use pxlrbt\FilamentExcel\Columns\Column;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
 use pxlrbt\FilamentExcel\Actions\Pages\ExportAction;
@@ -29,7 +30,8 @@ class ListItemExits extends ListRecords
 
                 ->before(function (array $data) {
                     // Attempt to find the item by name
-                    $item = Item::where('id', $data['name'])->first();
+                    $item = Item::where('user_id', Auth::id())->where('code', $data['code'])->first();
+
 
                     if (!$item) {
                         // Item not found, show a notification
@@ -63,30 +65,29 @@ class ListItemExits extends ListRecords
 
                 // Handle the actual record creation
                 ->using(function (array $data): Model {
-                    $item = $this->item;
 
                     // Reduce the item quantity and save once
-                    $item->decrement('quantity', $data['quantity']);
+                    $this->item->decrement('quantity', $data['quantity']);
 
-                    // Retrieve only the user's name with a single, efficient query
-                    $userName = User::where('id', $data['description'])->value('name');
 
                     if ($data['selection'] == 0) {
                         // Batch insert a new item with minimal overhead
                         Item::create([
-                            'name' => $item->name,
+                            'code' => $this->item->code,
+                            'name' => $this->item->name,
                             'quantity' => $data['quantity'],
-                            'category_id' => $item->category_id,
-                            'user_id' => $data['description'], // User ID remains
+                            'category_id' => $this->item->category_id,
+                            'user_id' => $data['description'],
                         ]);
                     }
 
                     // Create the item exit entry
                     return ItemExit::create([
-                        'item_id' => $item->id,
+                        'item_id' => $this->item->id,
                         'quantity' => $data['quantity'],
                         'exit_date' => $data['exit_date'],
-                        'description' => $userName ?: 'Unknown User', // Store the user's name in description
+                        'description' => $data['description'],
+                        'user_id' => Auth::id(),
                     ]);
                 }),
 

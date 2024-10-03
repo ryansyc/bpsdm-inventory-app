@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use pxlrbt\FilamentExcel\Columns\Column;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
 use pxlrbt\FilamentExcel\Actions\Pages\ExportAction;
+use Filament\Notifications\Notification;
 
 
 class ListItems extends ListRecords
@@ -25,19 +26,38 @@ class ListItems extends ListRecords
                 ->modalHeading('Tambah Barang')
                 ->modalWidth('md')
 
+                ->before(function (array $data) {
+                    // Check if name or code already exists
+                    $exists = Item::where(function ($query) use ($data) {
+                        $query->where('name', $data['name'])
+                            ->orWhere('code', $data['code']);
+                    })
+                        ->where('user_id', Auth::id())
+                        ->exists();
+
+                    if ($exists) {
+                        Notification::make()
+                            ->title('Barang sudah ada')
+                            ->danger()
+                            ->send();
+
+                        $this->halt(); // Stop the creation process
+                    }
+                })
+
                 ->mutateFormDataUsing(function (array $data): array {
                     $data['entry_date'] = now();
-                    $data['user_id'] = Auth::id();
                     return $data;
                 })
 
                 ->using(function (array $data): Model {
                     // Create the item record
                     $item = Item::create([
+                        'code' => $data['code'],
                         'name' => $data['name'],
                         'quantity' => $data['quantity'],
                         'category_id' => $data['category_id'],
-                        'user_id' => $data['user_id'],
+                        'user_id' => Auth::id(),
                     ]);
 
                     // Create the item entry record
@@ -46,6 +66,7 @@ class ListItems extends ListRecords
                         'item_id' => $item->id,
                         'quantity' => $data['quantity'],
                         'description' => $data['description'],
+                        'user_id' => Auth::id(),
                     ]);
 
                     return $item; // Return the created item

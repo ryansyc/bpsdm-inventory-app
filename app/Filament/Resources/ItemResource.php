@@ -15,6 +15,7 @@ use Filament\Tables\Table;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\Action;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ItemResource extends Resource
@@ -34,6 +35,11 @@ class ItemResource extends Resource
         return $form
             ->columns(1)
             ->schema([
+                Forms\Components\TextInput::make('code')
+                    ->label('Kode')
+                    ->required()
+                    ->maxLength(255)
+                    ->default(fn() => Str::random(6)),
                 Forms\Components\TextInput::make('name')
                     ->label('Nama Barang')
                     ->required()
@@ -50,7 +56,8 @@ class ItemResource extends Resource
                     ->minValue(0)
                     ->disabledOn('edit'),
                 Forms\Components\TextInput::make('description')
-                    ->label('Keterangan')
+                    ->label('Penerima')
+                    ->required()
                     ->maxLength(255)
                     ->hiddenOn('edit'),
             ]);
@@ -66,6 +73,10 @@ class ItemResource extends Resource
                     ->rowIndex()
                     ->alignCenter()
                     ->width('60px'),
+                Tables\Columns\TextColumn::make('code')
+                    ->label('Kode')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nama Barang')
                     ->searchable()
@@ -120,9 +131,9 @@ class ItemResource extends Resource
                     ->modalWidth('md'),
             ])
             ->bulkActions([
-                // Tables\Actions\BulkActionGroup::make([
-                //     Tables\Actions\DeleteBulkAction::make(),
-                // ]),
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
             ]);
     }
 

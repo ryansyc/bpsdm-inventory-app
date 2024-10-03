@@ -4,12 +4,14 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ItemEntryResource\Pages;
 use App\Filament\Resources\ItemEntryResource\RelationManagers;
+use App\Models\Item;
 use App\Models\ItemEntry;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Forms\Set;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -30,6 +32,15 @@ class ItemEntryResource extends Resource
         return $form
             ->columns(1)
             ->schema([
+                Forms\Components\Select::make('code')
+                    ->label('Kode Barang')
+                    ->relationship('item', 'code')
+                    ->placeholder('-')
+                    ->required()
+                    ->live()
+                    ->afterStateUpdated(function (Set $set, $state) {
+                        $set('name', Item::where('id', $state)->pluck('name')->first());
+                    }),
                 Forms\Components\TextInput::make('name')
                     ->label('Nama Barang')
                     ->required()

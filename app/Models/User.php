@@ -51,6 +51,16 @@ class User extends Authenticatable
         return $this->hasMany(Item::class, 'user_id');
     }
 
+    public function entries()
+    {
+        return $this->hasMany(ItemEntry::class, 'user_id');
+    }
+
+    public function exits()
+    {
+        return $this->hasMany(ItemExit::class, 'user_id');
+    }
+
     public function isSuperAdmin()
     {
         return $this->role === 'super-admin';

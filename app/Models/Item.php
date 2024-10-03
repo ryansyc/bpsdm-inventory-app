@@ -10,6 +10,7 @@ class Item extends Model
     use HasFactory;
 
     protected $fillable = [
+        'code',
         'name',
         'category_id',
         'quantity',
