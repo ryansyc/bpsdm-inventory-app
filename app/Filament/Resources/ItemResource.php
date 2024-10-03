@@ -100,11 +100,6 @@ class ItemResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
-                SelectFilter::make('warehouse')
-                    ->options(User::all()->pluck('name', 'id'))
-
-            ])
             ->actions([
                 Tables\Actions\EditAction::make()
                     ->color('warning')

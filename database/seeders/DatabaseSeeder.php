@@ -23,18 +23,21 @@ class DatabaseSeeder extends Seeder
             'name' => 'Gudang Utama',
             'email' => 'admin@admin.com',
             'password' => Hash::make('password'),
+            'role' => 'super-admin',
         ]);
 
         User::factory()->create([
             'name' => 'Gudang 1',
             'email' => 'gudang1@gudang1.com',
             'password' => Hash::make('password'),
+            'role' => 'admin',
         ]);
 
         User::factory()->create([
             'name' => 'Gudang 2',
             'email' => 'gudang2@gudang2.com',
             'password' => Hash::make('password'),
+            'role' => 'admin',
         ]);
 
         ItemCategory::create([
