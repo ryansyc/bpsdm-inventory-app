@@ -6,6 +6,7 @@ use App\Filament\Resources\ItemExitResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 use App\Models\Item;
 use App\Models\ItemExit;
 use Filament\Notifications\Notification;
@@ -28,7 +29,7 @@ class ListItemExits extends ListRecords
 
                 ->before(function (array $data) {
                     // Attempt to find the item by name
-                    $item = Item::where('name', $data['name'])->first();
+                    $item = Item::where('id', $data['name'])->first();
 
                     if (!$item) {
                         // Item not found, show a notification
@@ -64,18 +65,31 @@ class ListItemExits extends ListRecords
                 ->using(function (array $data): Model {
                     $item = $this->item;
 
-                    // Update item quantity
-                    $item->quantity -= $data['quantity'];
-                    $item->save();
+                    // Reduce the item quantity and save once
+                    $item->decrement('quantity', $data['quantity']);
 
-                    // Create item exit entry
+                    // Retrieve only the user's name with a single, efficient query
+                    $userName = User::where('id', $data['description'])->value('name');
+
+                    if ($data['selection'] == 0) {
+                        // Batch insert a new item with minimal overhead
+                        Item::create([
+                            'name' => $item->name,
+                            'quantity' => $data['quantity'],
+                            'category_id' => $item->category_id,
+                            'user_id' => $data['description'], // User ID remains
+                        ]);
+                    }
+
+                    // Create the item exit entry
                     return ItemExit::create([
                         'item_id' => $item->id,
                         'quantity' => $data['quantity'],
                         'exit_date' => $data['exit_date'],
-                        'description' => $data['description'],
+                        'description' => $userName ?: 'Unknown User', // Store the user's name in description
                     ]);
                 }),
+
             ExportAction::make()
                 ->label('Export')
                 ->exports([

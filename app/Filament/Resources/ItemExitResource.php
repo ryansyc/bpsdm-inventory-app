@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ItemExitResource\Pages;
 use App\Filament\Resources\ItemExitResource\RelationManagers;
 use App\Models\ItemExit;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -33,35 +34,40 @@ class ItemExitResource extends Resource
                 Forms\Components\Select::make('name')
                     ->label('Nama Barang')
                     ->relationship('item', 'name')
+                    ->placeholder('-')
                     ->required(),
+
                 Forms\Components\TextInput::make('quantity')
                     ->label('Jumlah')
                     ->required()
-                    ->minValue(0)
+                    ->minValue(1)
                     ->numeric(),
+
                 Forms\Components\Radio::make('selection')
-                    ->label('Choose an option')
+                    ->label('Pilih Penerima')
                     ->options([
-                        1 => 'Grup',
-                        0 => 'Orang',
+                        0 => 'Gudang',
+                        1 => 'Orang',
                     ])
-                    ->required()
-                    ->reactive(),
+                    ->default(0)
+                    ->live()
+                    ->required(),
 
-                Forms\Components\Select::make('selection_box')
-                    ->label('Select an Item')
-                    ->options([
-                        'item1' => 'Item 1',
-                        'item2' => 'Item 2',
-                        'item3' => 'Item 3',
-                    ])
+                Forms\Components\Select::make('description')
+                    ->label('Pilih Gudang')
+                    ->options(User::all()->pluck('name', 'id'))
+                    ->placeholder('-')
                     ->required()
-                    ->visible(fn(callable $get) => $get('selection') === 1),
+                    ->visible(function (Forms\Get $get) {
+                        return $get('selection') == 0;
+                    }),
 
-                Forms\Components\TextInput::make('input_text')
-                    ->label('Input Text')
+                Forms\Components\TextInput::make('description')
+                    ->label('Nama Penerima')
                     ->required()
-                    ->visible(fn(callable $get) => $get('selection') === 0),
+                    ->visible(function (Forms\Get $get) {
+                        return $get('selection') == 1;
+                    })
             ]);
     }
 

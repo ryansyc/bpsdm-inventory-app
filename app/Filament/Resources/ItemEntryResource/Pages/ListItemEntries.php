@@ -27,11 +27,11 @@ class ListItemEntries extends ListRecords
                 ->modalWidth('md')
 
                 ->before(function (array $data) {
-                    // Attempt to find the item by name
-                    $item = Item::where('name', $data['name'])->first();
+                    // Attempt to find the item by name, only select 'id' and 'quantity' for efficiency
+                    $item = Item::where('id', $data['name'])->select('id', 'quantity')->first();
 
                     if (!$item) {
-                        // Item not found, show a notification
+                        // Item not found, show a notification and halt
                         Notification::make()
                             ->title('Barang tidak ditemukan')
                             ->danger()
@@ -46,26 +46,25 @@ class ListItemEntries extends ListRecords
 
                 // Mutate form data before creation
                 ->mutateFormDataUsing(function (array $data): array {
-                    $data['entry_date'] = now(); // Set exit date
+                    // Set entry date in a minimal way
+                    $data['entry_date'] = now();
                     return $data;
                 })
 
                 // Handle the actual record creation
                 ->using(function (array $data): Model {
-                    $item = $this->item;
+                    // Use efficient increment method to update quantity directly
+                    Item::where('id', $this->item->id)->increment('quantity', $data['quantity']);
 
-                    // Update item quantity
-                    $item->quantity += $data['quantity'];
-                    $item->save();
-
-                    // Create item exit entry
+                    // Create item entry without reloading the `Item` model
                     return ItemEntry::create([
-                        'item_id' => $item->id,
-                        'quantity' => $data['quantity'],
+                        'item_id'    => $this->item->id,
+                        'quantity'   => $data['quantity'],
                         'entry_date' => $data['entry_date'],
                         'description' => $data['description'],
                     ]);
                 }),
+
             ExportAction::make()
                 ->label('Export')
                 ->exports([
