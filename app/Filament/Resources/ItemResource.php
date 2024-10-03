@@ -6,6 +6,7 @@ use App\Filament\Resources\ItemResource\Pages;
 use App\Filament\Resources\ItemResource\RelationManagers;
 use App\Models\Item;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,6 +14,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Actions\Action;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ItemResource extends Resource
@@ -47,16 +49,8 @@ class ItemResource extends Resource
                     ->numeric()
                     ->minValue(0)
                     ->disabledOn('edit'),
-                Forms\Components\Radio::make('selection')
-                    ->label('Choose an option')
-                    ->options([
-                        1 => 'Grup',
-                        0 => 'Orang',
-                    ])
-                    ->required()
-                    ->reactive(),
-                Forms\Components\TextInput::make('receiver')
-                    ->label('Deskripsi')
+                Forms\Components\TextInput::make('description')
+                    ->label('Keterangan')
                     ->maxLength(255)
                     ->hiddenOn('edit'),
             ]);
@@ -88,7 +82,8 @@ class ItemResource extends Resource
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Gudang')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->visible(Auth::user()->role === 'super-admin'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime('Y-m-d | H:i:s')
                     ->searchable()
@@ -100,6 +95,24 @@ class ItemResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->modifyQueryUsing(function (Builder $query) {
+                if (Auth::user()->role === 'admin') {
+                    return $query->where('user_id', Auth::id());
+                }
+            })
+            ->filters([
+                SelectFilter::make('user_id')
+                    ->label('Gudang')
+                    ->default(Auth::id())
+                    ->options(User::all()->pluck('name', 'id'))
+                    ->visible(Auth::user()->role === 'super-admin'),
+            ])
+            ->filtersTriggerAction(
+                fn(Action $action) => $action
+                    ->button()
+                    ->label('Gudang'),
+            )
+            ->persistFiltersInSession()
             ->actions([
                 Tables\Actions\EditAction::make()
                     ->color('warning')
