@@ -32,11 +32,7 @@ class UserResource extends Resource
             ->columns(1)
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->label('Nama')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->email()
+                    ->label('Username')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('password')
@@ -46,6 +42,14 @@ class UserResource extends Resource
                     ->dehydrateStateUsing(fn($state) => Hash::make($state))
                     ->dehydrated(fn($state) => filled($state))
                     ->required(fn(string $context): bool => $context === 'create'),
+
+                Forms\Components\Radio::make('role')
+                    ->label('Role')
+                    ->options([
+                        'admin' => 'Admin',
+                        'super-admin' => 'Super Admin',
+                    ])
+                    ->default('admin'),
             ]);
     }
 
@@ -60,11 +64,7 @@ class UserResource extends Resource
                     ->alignCenter()
                     ->width('60px'),
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Nama')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('email')
-                    ->label('Email')
+                    ->label('Username')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('password')
