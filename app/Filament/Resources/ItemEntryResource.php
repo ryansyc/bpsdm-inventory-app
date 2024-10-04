@@ -27,6 +27,7 @@ class ItemEntryResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
+
     public static function form(Form $form): Form
     {
         return $form
@@ -38,9 +39,7 @@ class ItemEntryResource extends Resource
                     ->placeholder('-')
                     ->required()
                     ->live()
-                    ->afterStateUpdated(function (Set $set, $state) {
-                        $set('name', Item::where('id', $state)->pluck('name')->first());
-                    }),
+                    ->afterStateUpdated(fn(Set $set, $state) => $set('name', Item::find($state)->name)),
                 Forms\Components\TextInput::make('name')
                     ->label('Nama Barang')
                     ->required()
@@ -84,14 +83,6 @@ class ItemEntryResource extends Resource
                     ->label('Deskripsi')
                     ->searchable()
                     ->sortable(),
-                // Tables\Columns\TextColumn::make('created_at')
-                //     ->dateTime()
-                //     ->sortable()
-                //     ->toggleable(isToggledHiddenByDefault: true),
-                // Tables\Columns\TextColumn::make('updated_at')
-                //     ->dateTime()
-                //     ->sortable()
-                //     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
@@ -103,7 +94,6 @@ class ItemEntryResource extends Resource
                 // ]),
             ]);
     }
-
     public static function getRelations(): array
     {
         return [

@@ -28,43 +28,30 @@ class ListItemEntries extends ListRecords
                 ->modalWidth('md')
 
                 ->before(function (array $data) {
-                    // Attempt to find the item by name, only select 'id' and 'quantity' for efficiency
-                    $item = Item::where('name', $data['name'])->select('id', 'quantity')->first();
+                    $this->item = Item::where('name', $data['name'])->first(['id', 'quantity']);
 
-                    if (!$item) {
-                        // Item not found, show a notification and halt
+                    if (!$this->item) {
                         Notification::make()
                             ->title('Barang tidak ditemukan')
                             ->danger()
                             ->send();
 
-                        $this->halt(); // Stop the process
+                        $this->halt();
                     }
-
-                    // Store the item for use in the `using()` method
-                    $this->item = $item;
                 })
 
-                // Mutate form data before creation
                 ->mutateFormDataUsing(function (array $data): array {
-                    // Set entry date in a minimal way
                     $data['entry_date'] = now();
                     return $data;
                 })
 
-                // Handle the actual record creation
                 ->using(function (array $data): Model {
-                    // Use efficient increment method to update quantity directly
                     $this->item->increment('quantity', $data['quantity']);
 
-                    // Create item entry without reloading the `Item` model
                     return ItemEntry::create([
                         'item_id'    => $this->item->id,
-                        'quantity'   => $data['quantity'],
-                        'entry_date' => $data['entry_date'],
-                        'description' => $data['description'],
                         'user_id'    => Auth::id(),
-                    ]);
+                    ] + $data);
                 }),
 
             ExportAction::make()
