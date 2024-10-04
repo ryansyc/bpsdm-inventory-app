@@ -6,17 +6,17 @@ use App\Filament\Resources\ItemResource\Pages;
 use App\Filament\Resources\ItemResource\RelationManagers;
 use App\Models\Item;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Filters\SelectFilter;
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\Action;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Notifications\Notification;
 
 class ItemResource extends Resource
 {
@@ -39,7 +39,7 @@ class ItemResource extends Resource
                     ->label('Kode')
                     ->required()
                     ->maxLength(255)
-                    ->default(fn() => Str::random(6)),
+                    ->default(Str::random(6)),
                 Forms\Components\TextInput::make('name')
                     ->label('Nama Barang')
                     ->required()
@@ -48,7 +48,7 @@ class ItemResource extends Resource
                     ->label('Kategori')
                     ->required()
                     ->relationship('category', 'name')
-                    ->native(false),
+                    ->placeholder('-'),
                 Forms\Components\TextInput::make('quantity')
                     ->label('Jumlah')
                     ->required()
@@ -62,7 +62,6 @@ class ItemResource extends Resource
                     ->hiddenOn('edit'),
             ]);
     }
-
     public static function table(Table $table): Table
     {
         return $table
@@ -95,16 +94,6 @@ class ItemResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->visible(Auth::user()->role === 'super-admin'),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime('Y-m-d | H:i:s')
-                    ->searchable()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime('Y-m-d | H:i:s')
-                    ->searchable()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->modifyQueryUsing(function (Builder $query) {
                 if (Auth::user()->role === 'admin') {
@@ -115,7 +104,7 @@ class ItemResource extends Resource
                 SelectFilter::make('user_id')
                     ->label('Gudang')
                     ->default(Auth::id())
-                    ->options(User::all()->pluck('name', 'id'))
+                    ->options(User::pluck('name', 'id'))
                     ->visible(Auth::user()->role === 'super-admin'),
             ])
             ->filtersTriggerAction(
@@ -129,13 +118,42 @@ class ItemResource extends Resource
                     ->color('warning')
                     ->modalHeading('Ubah Barang')
                     ->modalWidth('md'),
+
+                Tables\Actions\DeleteAction::make()
+                    ->action(function ($record) {
+                        if ($record->quantity > 0) {
+                            Notification::make()
+                                ->title("Stok {$record->name} masih ada")
+                                ->body("Hanya bisa menghapus saat stok kosong")
+                                ->danger()
+                                ->send();
+
+                            return;
+                        }
+                        $record->delete();
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->action(function ($records) {
+                            foreach ($records as $record) {
+                                if ($record->quantity > 0) {
+                                    Notification::make()
+                                        ->title("Stok {$record->name} masih ada")
+                                        ->body("Hanya bisa menghapus saat stok kosong")
+                                        ->danger()
+                                        ->send();
+
+                                    return;
+                                }
+                            }
+                            $records->delete();
+                        }),
                 ]),
             ]);
     }
+
 
     public static function getRelations(): array
     {

@@ -28,14 +28,13 @@ class ListItems extends ListRecords
 
                 ->before(function (array $data) {
                     // Check if name or code already exists
-                    $exists = Item::where(function ($query) use ($data) {
-                        $query->where('name', $data['name'])
-                            ->orWhere('code', $data['code']);
-                    })
-                        ->where('user_id', Auth::id())
-                        ->exists();
-
-                    if ($exists) {
+                    if (Item::where('user_id', Auth::id())
+                        ->where(function ($query) use ($data) {
+                            $query->where('name', $data['name'])
+                                ->orWhere('code', $data['code']);
+                        })
+                        ->exists()
+                    ) {
                         Notification::make()
                             ->title('Barang sudah ada')
                             ->danger()
@@ -71,7 +70,6 @@ class ListItems extends ListRecords
 
                     return $item; // Return the created item
                 }),
-
             ExportAction::make()
                 ->label('Export')
                 ->exports([

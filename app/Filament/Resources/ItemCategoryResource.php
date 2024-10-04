@@ -34,7 +34,8 @@ class ItemCategoryResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->label('Nama Kategori')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->debounce(500),
             ]);
     }
 
@@ -51,16 +52,6 @@ class ItemCategoryResource extends Resource
                     ->alignLeft()
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime('Y-m-d | H:i:s')
-                    ->searchable()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime('Y-m-d | H:i:s')
-                    ->searchable()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
@@ -75,7 +66,7 @@ class ItemCategoryResource extends Resource
                     ->modalHeading('Hapus Kategori Barang')
                     ->action(function (ItemCategory $record) {
                         // Check for associated items before deleting
-                        if ($record->items()->count() > 0) {
+                        if ($record->items()->exists()) {
                             Notification::make()
                                 ->danger()
                                 ->title('Tidak dapat menghapus kategori')
@@ -94,12 +85,6 @@ class ItemCategoryResource extends Resource
                             ->title('Kategori berhasil dihapus.')
                             ->send();
                     })
-            ])
-
-            ->bulkActions([
-                // Tables\Actions\BulkActionGroup::make([
-                //     Tables\Actions\DeleteBulkAction::make(),
-                // ]),
             ]);
     }
 
