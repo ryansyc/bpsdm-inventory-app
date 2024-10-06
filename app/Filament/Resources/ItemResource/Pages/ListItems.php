@@ -50,19 +50,26 @@ class ListItems extends ListRecords
                 })
 
                 ->using(function (array $data): Model {
-                    // Create the item record
+
                     $item = Item::create([
+                        'code' => $data['code'],
+                        'name' => $data['name'],
+                        'quantity' => $data['quantity'],
+                        'category_id' => $data['category_id'],
                         'user_id' => Auth::id(),
-                    ] + $data);
+                    ]);
 
-                    // Create the item entry record
                     ItemEntry::create([
+                        'entry_date' => $data['entry_date'],
                         'item_id' => $item->id,
+                        'quantity' => $data['quantity'],
+                        'description' => $data['description'],
                         'user_id' => Auth::id(),
-                    ] + $data);
+                    ]);
 
-                    return $item; // Return the created item
+                    return $item;
                 }),
+
             ExportAction::make()
                 ->label('Export')
                 ->exports([

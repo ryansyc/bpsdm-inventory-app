@@ -30,48 +30,39 @@ class ListItemExits extends ListRecords
 
                 ->before(function (array $data) {
                     // Attempt to find the item by name
-                    $item = Item::where('user_id', Auth::id())->where('code', $data['code'])->first();
+                    $this->item = Item::where('user_id', Auth::id())->where('code', $data['code'])->first();
 
+                    if (!$this->item) {
 
-                    if (!$item) {
-                        // Item not found, show a notification
                         Notification::make()
                             ->title('Barang tidak ditemukan')
                             ->danger()
                             ->send();
 
-                        $this->halt(); // Stop the process
+                        $this->halt();
                     }
 
-                    if ($item->quantity < $data['quantity']) {
-                        // Item quantity is not enough, show a notification
+                    if ($this->item->quantity < $data['quantity']) {
+
                         Notification::make()
                             ->title('Stok tidak mencukupi')
                             ->danger()
                             ->send();
 
-                        $this->halt(); // Stop the process
+                        $this->halt();
                     }
-
-                    // Store the item for use in the `using()` method
-                    $this->item = $item;
                 })
 
-                // Mutate form data before creation
                 ->mutateFormDataUsing(function (array $data): array {
-                    $data['exit_date'] = now(); // Set exit date
+                    $data['exit_date'] = now();
                     return $data;
                 })
 
-                // Handle the actual record creation
                 ->using(function (array $data): Model {
-
-                    // Reduce the item quantity and save once
                     $this->item->decrement('quantity', $data['quantity']);
 
-
                     if ($data['selection'] == 0) {
-                        // Batch insert a new item with minimal overhead
+
                         Item::create([
                             'code' => $this->item->code,
                             'name' => $this->item->name,

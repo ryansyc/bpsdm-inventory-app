@@ -34,19 +34,23 @@ class ItemExitResource extends Resource
         return $form
             ->columns(1)
             ->schema([
-                Forms\Components\Select::make('code')
+                Forms\Components\TextInput::make('code')
                     ->label('Kode Barang')
-                    ->options(Item::where('user_id', Auth::id())->pluck('code', 'code'))
+                    ->required()
+                    ->live()
+                    ->afterStateUpdated(function (Set $set, $state) {
+                        $set('name', Item::where('code', $state)->value('name'));
+                    }),
+
+                Forms\Components\Select::make('name')
+                    ->label('Nama Barang')
+                    ->options(Item::where('user_id', Auth::id())->pluck('name', 'name'))
                     ->placeholder('-')
                     ->required()
                     ->live()
                     ->afterStateUpdated(function (Set $set, $state) {
-                        $set('name', Item::where('code', $state)->pluck('name')->first());
+                        $set('code', Item::where('name', $state)->value('code'));
                     }),
-                Forms\Components\TextInput::make('name')
-                    ->label('Nama Barang')
-                    ->required()
-                    ->maxLength(255),
 
                 Forms\Components\TextInput::make('quantity')
                     ->label('Jumlah')
@@ -81,7 +85,6 @@ class ItemExitResource extends Resource
                     })
             ]);
     }
-
     public static function table(Table $table): Table
     {
         return $table
@@ -109,14 +112,7 @@ class ItemExitResource extends Resource
                     ->label('Deskripsi')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+
             ])
             ->modifyQueryUsing(function (Builder $query) {
                 return $query->where('user_id', Auth::id());
@@ -131,7 +127,6 @@ class ItemExitResource extends Resource
                 // ]),
             ]);
     }
-
     public static function getRelations(): array
     {
         return [

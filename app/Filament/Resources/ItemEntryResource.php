@@ -12,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Forms\Set;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -33,17 +34,24 @@ class ItemEntryResource extends Resource
         return $form
             ->columns(1)
             ->schema([
-                Forms\Components\Select::make('code')
+                Forms\Components\TextInput::make('code')
                     ->label('Kode Barang')
-                    ->relationship('item', 'code')
+                    ->required()
+                    ->live()
+                    ->afterStateUpdated(function (Set $set, $state) {
+                        $set('name', Item::where('code', $state)->value('name'));
+                    }),
+
+                Forms\Components\Select::make('name')
+                    ->label('Nama Barang')
+                    ->options(Item::where('user_id', Auth::id())->pluck('name', 'name'))
                     ->placeholder('-')
                     ->required()
                     ->live()
-                    ->afterStateUpdated(fn(Set $set, $state) => $set('name', Item::find($state)->name)),
-                Forms\Components\TextInput::make('name')
-                    ->label('Nama Barang')
-                    ->required()
-                    ->maxLength(255),
+                    ->afterStateUpdated(function (Set $set, $state) {
+                        $set('code', Item::where('name', $state)->value('code'));
+                    }),
+
                 Forms\Components\TextInput::make('quantity')
                     ->label('Jumlah')
                     ->required()
@@ -84,6 +92,9 @@ class ItemEntryResource extends Resource
                     ->searchable()
                     ->sortable(),
             ])
+            ->modifyQueryUsing(function (Builder $query) {
+                return $query->where('user_id', Auth::id());
+            })
             ->filters([
                 //
             ])
