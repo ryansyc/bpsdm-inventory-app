@@ -14,6 +14,8 @@ use Filament\Tables\Table;
 use Filament\Forms\Set;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Filters\Filter;
+use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ItemEntryResource extends Resource
@@ -74,12 +76,12 @@ class ItemEntryResource extends Resource
                     ->alignCenter()
                     ->width('60px'),
                 Tables\Columns\TextColumn::make('entry_date')
-                    ->label('Tanggal Masuk')
+                    ->label('Tanggal')
                     ->dateTime('Y-m-d | H:i:s')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('item.name')
-                    ->label('Nama Barang')
+                    ->label('Nama')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('quantity')
@@ -96,7 +98,22 @@ class ItemEntryResource extends Resource
                 return $query->where('user_id', Auth::id());
             })
             ->filters([
-                //
+                Filter::make('created_at')
+                    ->form([
+                        DatePicker::make('dari'),
+                        DatePicker::make('sampai'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['dari'],
+                                fn(Builder $query, $date): Builder => $query->whereDate('entry_date', '>=', $date),
+                            )
+                            ->when(
+                                $data['sampai'],
+                                fn(Builder $query, $date): Builder => $query->whereDate('entry_date', '<=', $date),
+                            );
+                    })
             ])
             ->actions([])
             ->bulkActions([

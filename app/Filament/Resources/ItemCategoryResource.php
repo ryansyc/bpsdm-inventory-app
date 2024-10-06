@@ -48,7 +48,7 @@ class ItemCategoryResource extends Resource
                     ->alignCenter()
                     ->width('60px'),
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Nama Kategori')
+                    ->label('Kategori')
                     ->alignLeft()
                     ->searchable()
                     ->sortable(),
