@@ -41,10 +41,10 @@ class ItemEntries extends BaseWidget
                     ->label('Keterangan')
                     ->searchable()
                     ->sortable(),
-                    // ables\Columns\TextColumn::make('description')
-                    // ->label('Keterangan')
-                    // ->searchable()
-                    // ->sortable(),
+                Tables\Columns\TextColumn::make('description')
+                    ->label('Keterangan')
+                    ->searchable()
+                    ->sortable(),
             ]);
     }
 }
