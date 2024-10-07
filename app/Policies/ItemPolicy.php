@@ -13,9 +13,4 @@ class ItemPolicy
     {
         return $user->isSuperAdmin() || $user->isAdmin();
     }
-
-    public function create(User $user): bool
-    {
-        return $user->isSuperAdmin();
-    }
 }

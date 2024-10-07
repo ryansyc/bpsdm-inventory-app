@@ -11,6 +11,6 @@ class ItemEntryPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isSuperAdmin() || $user->isAdmin();
+        return $user->isSuperAdmin();
     }
 }

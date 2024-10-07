@@ -6,8 +6,6 @@ use App\Filament\Resources\ItemExitResource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Auth;
 
 class ItemExits extends BaseWidget
 {
@@ -21,9 +19,6 @@ class ItemExits extends BaseWidget
             ->query(
                 ItemExitResource::getEloquentQuery()
             )
-            ->modifyQueryUsing(function (Builder $query) {
-                return $query->where('user_id', Auth::id());
-            })
             ->defaultPaginationPageOption(5)
             ->defaultSort('exit_date', 'desc')
             ->columns([
