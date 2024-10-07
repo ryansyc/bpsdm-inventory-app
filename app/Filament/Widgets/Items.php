@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Database\Eloquent\Builder;
 
 class Items extends BaseWidget
 {
@@ -22,6 +23,9 @@ class Items extends BaseWidget
             ->query(
                 ItemResource::getEloquentQuery()
             )
+            ->modifyQueryUsing(function (Builder $query) {
+                return $query->where('user_id', Auth::id());
+            })
             ->defaultPaginationPageOption(5)
             ->defaultSort('quantity', 'asc')
             ->columns([
