@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\ItemCategory;
 use App\Models\Item;
 use App\Models\ItemEntry;
+use App\Models\ItemExit;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,7 +18,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
 
         User::create([
             'name' => 'Gudang Utama',
@@ -63,78 +63,138 @@ class DatabaseSeeder extends Seeder
             'category_id' => 1,
             'quantity' => 10,
             'user_id' => 1,
-        ]);
-
-        Item::create([
-            'code' => 'DEF456',
-            'name' => 'Sofa',
-            'category_id' => 2, // Furniture
-            'quantity' => 5,
-            'user_id' => 1,
-        ]);
-
-        Item::create([
-            'code' => 'GHI789',
-            'name' => 'T-shirt',
-            'category_id' => 3, // Clothing
-            'quantity' => 20,
-            'user_id' => 1,
-        ]);
-
-        Item::create([
-            'code' => 'JKL012',
-            'name' => 'Novel',
-            'category_id' => 4, // Books
-            'quantity' => 15,
-            'user_id' => 1,
-        ]);
-
-        Item::create([
-            'code' => 'MNO345',
-            'name' => 'Cookware Set',
-            'category_id' => 5, // Kitchenware
-            'quantity' => 8,
-            'user_id' => 1,
+            'price' => 10000,
+            'total_price' => 100000
         ]);
 
         ItemEntry::create([
             'entry_date' => now(),
             'item_id' => 1,
+            'quantity' => 20,
+            'description' => 'Andi',
+            'user_id' => 1,
+            'total_price' => 200000
+        ]);
+
+        ItemExit::create([
+            'exit_date' => now(),
+            'item_id' => 1,
             'quantity' => 10,
             'description' => 'Andi',
-            'user_id' => 1
+            'user_id' => 1,
+            'total_price' => 100000
+        ]);
+
+        Item::create([
+            'code' => 'XYZ456',
+            'name' => 'Monitor',
+            'category_id' => 2,
+            'quantity' => 15,
+            'user_id' => 1,
+            'price' => 5000,
+            'total_price' => 75000
         ]);
 
         ItemEntry::create([
             'entry_date' => now(),
             'item_id' => 2,
+            'quantity' => 20,
+            'description' => 'Andi',
+            'user_id' => 1,
+            'total_price' => 100000
+        ]);
+
+        ItemExit::create([
+            'exit_date' => now(),
+            'item_id' => 2,
             'quantity' => 5,
-            'description' => 'Budi',
-            'user_id' => 1
+            'description' => 'Andi',
+            'user_id' => 1,
+            'total_price' => 25000
+        ]);
+
+        Item::create([
+            'code' => 'DEF789',
+            'name' => 'Keyboard',
+            'category_id' => 3,
+            'quantity' => 50,
+            'user_id' => 1,
+            'price' => 3000,
+            'total_price' => 150000
         ]);
 
         ItemEntry::create([
             'entry_date' => now(),
             'item_id' => 3,
+            'quantity' => 70,
+            'description' => 'Andi',
+            'user_id' => 1,
+            'total_price' => 210000
+        ]);
+
+        ItemExit::create([
+            'exit_date' => now(),
+            'item_id' => 3,
             'quantity' => 20,
-            'description' => 'Caca',
-            'user_id' => 1
+            'description' => 'Andi',
+            'user_id' => 1,
+            'total_price' => 60000
+        ]);
+
+        Item::create([
+            'code' => 'GHI101',
+            'name' => 'Mouse',
+            'category_id' => 1,
+            'quantity' => 100,
+            'user_id' => 1,
+            'price' => 2000,
+            'total_price' => 200000
         ]);
 
         ItemEntry::create([
             'entry_date' => now(),
             'item_id' => 4,
-            'quantity' => 15,
-            'description' => 'Dedi',
-            'user_id' => 1
+            'quantity' => 120,
+            'description' => 'Andi',
+            'user_id' => 1,
+            'total_price' => 240000
+        ]);
+
+        ItemExit::create([
+            'exit_date' => now(),
+            'item_id' => 4,
+            'quantity' => 20,
+            'description' => 'Andi',
+            'user_id' => 1,
+            'total_price' => 40000
+        ]);
+
+        Item::create([
+            'code' => 'JKL102',
+            'name' => 'Printer',
+            'category_id' => 2,
+            'quantity' => 5,
+            'user_id' => 1,
+            'price' => 6000,
+            'total_price' => 30000
         ]);
 
         ItemEntry::create([
             'entry_date' => now(),
-            'item_id' => 5,
-            'quantity' => 8,
-            'description' => 'Eko',
-            'user_id' => 1
+            'item_id' => 4,
+            'quantity' => 10,
+            'description' => 'Andi',
+            'user_id' => 1,
+            'total_price' => 60000
+        ]);
+
+        ItemExit::create([
+            'exit_date' => now(),
+            'item_id' => 4,
+            'quantity' => 5,
+            'description' => 'Andi',
+            'user_id' => 1,
+            'total_price' => 30000
         ]);
     }
 }

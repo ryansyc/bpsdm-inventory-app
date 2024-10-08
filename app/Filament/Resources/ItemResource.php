@@ -38,8 +38,7 @@ class ItemResource extends Resource
                 Forms\Components\TextInput::make('code')
                     ->label('Kode')
                     ->required()
-                    ->maxLength(255)
-                    ->default(Str::random(6)),
+                    ->maxLength(255),
                 Forms\Components\TextInput::make('name')
                     ->label('Nama Barang')
                     ->required()
@@ -49,6 +48,11 @@ class ItemResource extends Resource
                     ->required()
                     ->relationship('category', 'name')
                     ->placeholder('-'),
+                Forms\Components\TextInput::make('price')
+                    ->label('Harga Satuan')
+                    ->required()
+                    ->numeric()
+                    ->minValue(0),
                 Forms\Components\TextInput::make('quantity')
                     ->label('Jumlah')
                     ->required()
@@ -87,6 +91,16 @@ class ItemResource extends Resource
                 Tables\Columns\TextColumn::make('quantity')
                     ->label('Jumlah')
                     ->numeric()
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('price')
+                    ->label('Harga')
+                    ->formatStateUsing(fn($state) => 'Rp ' . number_format($state, 0, ',', '.'))
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('total_price')
+                    ->label('Total Harga')
+                    ->formatStateUsing(fn($state) => 'Rp ' . number_format($state, 0, ',', '.'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')

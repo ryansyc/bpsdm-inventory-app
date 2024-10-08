@@ -15,6 +15,7 @@ class ItemExit extends Model
         'quantity',
         'description',
         'user_id',
+        'total_price',
     ];
 
     public function item()

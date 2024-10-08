@@ -43,7 +43,6 @@ class ItemEntryResource extends Resource
                     ->afterStateUpdated(function (Set $set, $state) {
                         $set('name', Item::where('code', $state)->value('name'));
                     }),
-
                 Forms\Components\Select::make('name')
                     ->label('Nama Barang')
                     ->options(Item::where('user_id', Auth::id())->pluck('name', 'name'))
@@ -53,7 +52,6 @@ class ItemEntryResource extends Resource
                     ->afterStateUpdated(function (Set $set, $state) {
                         $set('code', Item::where('name', $state)->value('code'));
                     }),
-
                 Forms\Components\TextInput::make('quantity')
                     ->label('Jumlah')
                     ->required()
@@ -87,6 +85,16 @@ class ItemEntryResource extends Resource
                 Tables\Columns\TextColumn::make('quantity')
                     ->label('Jumlah')
                     ->numeric()
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('item.price')
+                    ->label('Harga')
+                    ->formatStateUsing(fn($state) => 'Rp ' . number_format($state, 0, ',', '.'))
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('total_price')
+                    ->label('Total Harga')
+                    ->formatStateUsing(fn($state) => 'Rp ' . number_format($state, 0, ',', '.'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('description')

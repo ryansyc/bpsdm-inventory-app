@@ -29,11 +29,11 @@ class ListItemExits extends ListRecords
                 ->modalWidth('md')
 
                 ->before(function (array $data) {
-                    // Attempt to find the item by name
-                    $this->item = Item::where('user_id', Auth::id())->where('code', $data['code'])->first();
+                    $this->item = Item::where('user_id', Auth::id())
+                        ->where('name', $data['name'])
+                        ->first();
 
                     if (!$this->item) {
-
                         Notification::make()
                             ->title('Barang tidak ditemukan')
                             ->danger()
@@ -43,7 +43,6 @@ class ListItemExits extends ListRecords
                     }
 
                     if ($this->item->quantity < $data['quantity']) {
-
                         Notification::make()
                             ->title('Stok tidak mencukupi')
                             ->danger()
@@ -59,29 +58,32 @@ class ListItemExits extends ListRecords
                 })
 
                 ->using(function (array $data): Model {
+                    $total_price = $data['quantity'] * $this->item->price;
                     $this->item->decrement('quantity', $data['quantity']);
+                    $this->item->decrement('total_price', $total_price);
 
                     if ($data['selection'] == 0) {
-
                         Item::create([
                             'code' => $this->item->code,
                             'name' => $this->item->name,
                             'quantity' => $data['quantity'],
+                            'price' => $this->item->price,
+                            'total_price' => $total_price,
                             'category_id' => $this->item->category_id,
-                            'user_id' => $data['description'],
+                            'user_id' => User::where('name', $data['description'])->value('id'),
                         ]);
                     }
 
                     // Create the item exit entry
                     return ItemExit::create([
                         'item_id' => $this->item->id,
-                        'quantity' => $data['quantity'],
                         'exit_date' => $data['exit_date'],
+                        'quantity' => $data['quantity'],
+                        'total_price' => $total_price,
                         'description' => $data['description'],
                         'user_id' => Auth::id(),
                     ]);
                 }),
-
             ExportAction::make()
                 ->label('Export')
                 ->exports([

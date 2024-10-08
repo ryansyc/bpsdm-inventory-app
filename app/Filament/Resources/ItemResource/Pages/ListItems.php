@@ -55,6 +55,8 @@ class ListItems extends ListRecords
                         'code' => $data['code'],
                         'name' => $data['name'],
                         'quantity' => $data['quantity'],
+                        'price' => $data['price'],
+                        'total_price' => $data['quantity'] * $data['price'],
                         'category_id' => $data['category_id'],
                         'user_id' => Auth::id(),
                     ]);
@@ -63,6 +65,7 @@ class ListItems extends ListRecords
                         'entry_date' => $data['entry_date'],
                         'item_id' => $item->id,
                         'quantity' => $data['quantity'],
+                        'total_price' => $data['quantity'] * $data['price'],
                         'description' => $data['description'],
                         'user_id' => Auth::id(),
                     ]);
