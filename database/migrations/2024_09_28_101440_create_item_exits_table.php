@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('quantity')->unsigned();
             $table->string('description');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->integer('total_price')->unsigned();
             $table->timestamps();
         });
     }

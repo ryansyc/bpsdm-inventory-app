@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained('item_categories')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->integer('quantity')->unsigned();
+            $table->integer('price')->unsigned();
             $table->timestamps();
         });
     }
