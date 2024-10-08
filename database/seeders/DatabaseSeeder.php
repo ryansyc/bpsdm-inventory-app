@@ -63,7 +63,8 @@ class DatabaseSeeder extends Seeder
             'category_id' => 1,
             'quantity' => 10,
             'user_id' => 1,
-            'price' => 10000
+            'price' => 10000,
+            'total_price' => 100000
         ]);
 
         ItemEntry::create([
@@ -90,7 +91,8 @@ class DatabaseSeeder extends Seeder
             'category_id' => 2,
             'quantity' => 15,
             'user_id' => 1,
-            'price' => 5000
+            'price' => 5000,
+            'total_price' => 75000
         ]);
 
         ItemEntry::create([
@@ -117,7 +119,8 @@ class DatabaseSeeder extends Seeder
             'category_id' => 3,
             'quantity' => 50,
             'user_id' => 1,
-            'price' => 3000
+            'price' => 3000,
+            'total_price' => 150000
         ]);
 
         ItemEntry::create([
@@ -144,7 +147,8 @@ class DatabaseSeeder extends Seeder
             'category_id' => 1,
             'quantity' => 100,
             'user_id' => 1,
-            'price' => 2000
+            'price' => 2000,
+            'total_price' => 200000
         ]);
 
         ItemEntry::create([
@@ -171,7 +175,8 @@ class DatabaseSeeder extends Seeder
             'category_id' => 2,
             'quantity' => 5,
             'user_id' => 1,
-            'price' => 6000
+            'price' => 6000,
+            'total_price' => 30000
         ]);
 
         ItemEntry::create([

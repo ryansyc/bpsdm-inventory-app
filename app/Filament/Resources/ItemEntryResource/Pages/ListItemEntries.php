@@ -28,9 +28,12 @@ class ListItemEntries extends ListRecords
                 ->modalWidth('md')
 
                 ->before(function (array $data) {
-                    $item = Item::where('name', $data['name'])->select('id', 'quantity')->first();
+                    $this->item = Item::where('user_id', Auth::id())
+                        ->where('name', $data['name'])
+                        ->select('id', 'price')
+                        ->first();
 
-                    if (!$item) {
+                    if (!$this->item) {
                         Notification::make()
                             ->title('Barang tidak ditemukan')
                             ->danger()
@@ -38,8 +41,6 @@ class ListItemEntries extends ListRecords
 
                         $this->halt();
                     }
-
-                    $this->item = $item;
                 })
 
                 ->mutateFormDataUsing(function (array $data): array {
@@ -48,12 +49,15 @@ class ListItemEntries extends ListRecords
                 })
 
                 ->using(function (array $data): Model {
+                    $total_price = $data['quantity'] * $this->item->price;
                     $this->item->increment('quantity', $data['quantity']);
+                    $this->item->increment('total_price', $total_price);
 
                     return ItemEntry::create([
                         'item_id'    => $this->item->id,
                         'quantity'   => $data['quantity'],
                         'entry_date' => $data['entry_date'],
+                        'total_price' => $total_price,
                         'description' => $data['description'],
                         'user_id'    => Auth::id(),
                     ]);

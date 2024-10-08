@@ -14,8 +14,9 @@ class Item extends Model
         'name',
         'category_id',
         'quantity',
-        'user_id',
         'price',
+        'total_price',
+        'user_id',
     ];
 
     // Define the relationship with ItemCategory

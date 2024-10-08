@@ -72,7 +72,7 @@ class ItemExitResource extends Resource
 
                 Forms\Components\Select::make('description')
                     ->label('Pilih Gudang')
-                    ->options(User::where('id', '!=', 1)->pluck('name', 'id'))
+                    ->options(User::where('id', '!=', 1)->pluck('name', 'name'))
                     ->placeholder('-')
                     ->required()
                     ->visible(function (Forms\Get $get) {
@@ -108,6 +108,16 @@ class ItemExitResource extends Resource
                 Tables\Columns\TextColumn::make('quantity')
                     ->label('Jumlah')
                     ->numeric()
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('item.price')
+                    ->label('Harga')
+                    ->formatStateUsing(fn($state) => 'Rp ' . number_format($state, 0, ',', '.'))
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('total_price')
+                    ->label('Total Harga')
+                    ->formatStateUsing(fn($state) => 'Rp ' . number_format($state, 0, ',', '.'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('description')
