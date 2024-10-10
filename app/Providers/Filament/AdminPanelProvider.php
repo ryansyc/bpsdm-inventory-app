@@ -18,6 +18,12 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Navigation\NavigationItem;
+use App\Filament\Resources\ItemResource;
+use App\Models\User;
+use Filament\Navigation\NavigationGroup;
+use Filament\Pages\Dashboard;
+use App\Filament\Resources\UserResource;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -41,10 +47,7 @@ class AdminPanelProvider extends PanelProvider
                 Pages\Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
-            ->widgets([
-                // Widgets\AccountWidget::class,
-                // Widgets\FilamentInfoWidget::class,
-            ])
+            ->widgets([])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -59,17 +62,47 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->colors([
-                // 'primary' => Color::hex('#006799'),
-                // 'primary' => Color::hex('#00AFEF'),
-                'primary' => Color::hex('#027D3D'),
-                // 'primary' => Color::hex('#FCC134'),
-
-            ])
             ->brandLogo(asset('images/bpsdm.png'))
             ->brandLogoHeight('2.5rem')
             ->spa()
-            ->sidebarWidth('300px');
-        // ->databaseNotifications();
+            ->sidebarWidth('300px')
+
+            ->navigationGroups([
+                NavigationGroup::make()
+                    ->label('Gudang Utama'),
+                NavigationGroup::make()
+                    ->label('Stok Barang Bidang')
+            ])
+
+            ->navigationItems(self::getNavigationItems());
+    }
+
+
+    public static function getNavigationItems(): array
+    {
+        // Get built-in resource navigation items
+        $defaultNavigationItems = [
+            NavigationItem::make('Stok Barang')
+                ->group('Gudang Utama')
+                ->icon('heroicon-s-cube')
+                ->isActiveWhen(fn() => request()->fullUrlIs(ItemResource::getUrl('index', ['id' => 1])))
+                ->sort(2)
+                ->url(fn() => ItemResource::getUrl('index', ['id' => 1])),
+        ];
+
+        // Create custom navigation items based on users
+        $customNavigationItems = User::all()
+            ->reject(fn($user) => $user->id === 1)
+            ->map(
+                fn(User $user) => NavigationItem::make($user->name)
+                    ->group('Stok Barang Bidang')
+                    ->icon('heroicon-s-cube')
+                    ->isActiveWhen(fn() => request()->fullUrlIs(ItemResource::getUrl('index', ['id' => $user->id])))
+                    ->url(fn() => ItemResource::getUrl('index', ['id' => $user->id]))
+            )
+            ->toArray();
+
+        // Merge the built-in resource navigation at the beginning
+        return array_merge($defaultNavigationItems, $customNavigationItems);
     }
 }

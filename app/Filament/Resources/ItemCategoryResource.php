@@ -26,6 +26,8 @@ class ItemCategoryResource extends Resource
 
     protected static ?int $navigationSort = 4;
 
+    protected static ?string $navigationGroup = 'Gudang Utama';
+
     public static function form(Form $form): Form
     {
         return $form

@@ -17,18 +17,15 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Request;
 
 class ItemResource extends Resource
 {
     protected static ?string $model = Item::class;
 
-    protected static ?string $navigationIcon = 'heroicon-s-cube';
-
     protected static ?string $slug = 'stok-barang';
 
-    protected static ?string $pluralModelLabel = 'stok barang';
-
-    protected static ?int $navigationSort = 1;
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function form(Form $form): Form
     {
@@ -109,24 +106,7 @@ class ItemResource extends Resource
                     ->sortable()
                     ->visible(Auth::user()->role === 'super-admin'),
             ])
-            ->modifyQueryUsing(function (Builder $query) {
-                if (Auth::user()->role === 'admin') {
-                    return $query->where('user_id', Auth::id());
-                }
-            })
-            ->filters([
-                SelectFilter::make('user_id')
-                    ->label('Gudang')
-                    ->default(Auth::id())
-                    ->options(User::pluck('name', 'id'))
-                    ->visible(Auth::user()->role === 'super-admin'),
-            ])
-            ->filtersTriggerAction(
-                fn(Action $action) => $action
-                    ->button()
-                    ->label('Gudang'),
-            )
-            ->persistFiltersInSession()
+            ->modifyQueryUsing(fn($query) => static::applyFilter($query))
             ->actions([
                 Tables\Actions\EditAction::make()
                     ->color('warning')
@@ -168,6 +148,21 @@ class ItemResource extends Resource
             ]);
     }
 
+    protected static function applyFilter($query)
+    {
+        $bidang = request()->query('id');
+
+        return $query->where('user_id', $bidang);
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        $userId = request()->query('id');
+
+        $user = $userId ? User::find($userId) : null;
+
+        return $user ? "Stok Barang {$user->name}" : 'Stok Barang';
+    }
 
     public static function getRelations(): array
     {
