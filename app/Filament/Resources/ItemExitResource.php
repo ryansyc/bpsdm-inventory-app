@@ -31,6 +31,8 @@ class ItemExitResource extends Resource
 
     protected static ?int $navigationSort = 3;
 
+    protected static ?string $navigationGroup = 'Gudang Utama';
+
     public static function form(Form $form): Form
     {
         return $form
