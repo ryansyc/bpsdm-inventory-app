@@ -7,20 +7,21 @@ use Illuminate\Support\Facades\Auth;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use App\Models\Item;
 
-class Items extends BaseWidget
+class EmptyItemsWidget extends BaseWidget
 {
-    protected static ?int $sort = 3;
+    protected static ?int $sort = 2;
 
-    protected static ?string $heading = 'Stok Barang';
-
-    protected int | string | array $columnSpan = 'full';
+    protected static ?string $heading = 'Barang Habis';
 
     public function table(Table $table): Table
     {
         return $table
             ->query(
-                ItemResource::getEloquentQuery()
+                fn() => ItemResource::getEloquentQuery()
+                    ->where('user_id', Auth::id())
+                    ->where('quantity', 0)
             )
             ->defaultPaginationPageOption(5)
             ->defaultSort('quantity', 'asc')
@@ -42,11 +43,24 @@ class Items extends BaseWidget
                     ->numeric()
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('user.name')
-                    ->label('Gudang')
-                    ->searchable()
-                    ->sortable()
-                    ->visible(Auth::user()->role === 'super-admin'),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Status')
+                    ->badge()
+                    ->getStateUsing(fn($record) => $record->quantity)
+                    ->formatStateUsing(
+                        fn(int $state): string => match (true) {
+                            $state === 0 => 'Habis',
+                            $state > 0 && $state < 10 => 'Sedikit',
+                            $state >= 10 => 'Tersedia',
+                        }
+                    )
+                    ->color(
+                        fn(int $state): string => match (true) {
+                            $state === 0 => 'danger',
+                            $state > 0 && $state < 10 => 'warning',
+                            $state >= 10 => 'success',
+                        }
+                    )
             ]);
     }
 }

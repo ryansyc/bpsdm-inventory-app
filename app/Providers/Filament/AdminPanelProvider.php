@@ -22,8 +22,10 @@ use Filament\Navigation\NavigationItem;
 use App\Filament\Resources\ItemResource;
 use App\Models\User;
 use Filament\Navigation\NavigationGroup;
+use App\Filament\Widgets\ItemsWidget;
 use Filament\Pages\Dashboard;
 use App\Filament\Resources\UserResource;
+use Filament\View\LegacyComponents\Widget;
 
 class AdminPanelProvider extends PanelProvider
 {
