@@ -68,6 +68,7 @@ class ItemResource extends Resource
         return $table
             ->recordUrl(null)
             ->recordAction(null)
+            ->modifyQueryUsing(fn($query) => static::applyFilter($query))
             ->columns([
                 Tables\Columns\TextColumn::make('No')
                     ->rowIndex()
@@ -100,13 +101,27 @@ class ItemResource extends Resource
                     ->formatStateUsing(fn($state) => 'Rp ' . number_format($state, 0, ',', '.'))
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('user.name')
-                    ->label('Gudang')
-                    ->searchable()
-                    ->sortable()
-                    ->visible(Auth::user()->role === 'super-admin'),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Status')
+                    ->badge()
+                    ->getStateUsing(fn($record) => $record->quantity)
+                    ->formatStateUsing(function ($state) {
+                        if ($state === 0) {
+                            return 'Habis';
+                        } elseif ($state < 10) {
+                            return 'Sedikit';
+                        } else {
+                            return 'Tersedia';
+                        }
+                    })
+                    ->color(function (string $state): string {
+                        return match (true) {
+                            $state === 0 => 'danger',
+                            $state < 10 => 'warning',
+                            default => 'success',
+                        };
+                    })
             ])
-            ->modifyQueryUsing(fn($query) => static::applyFilter($query))
             ->actions([
                 Tables\Actions\EditAction::make()
                     ->color('warning')
@@ -151,16 +166,13 @@ class ItemResource extends Resource
     protected static function applyFilter($query)
     {
         $bidang = request()->query('id');
-
         return $query->where('user_id', $bidang);
     }
 
     public static function getPluralModelLabel(): string
     {
         $userId = request()->query('id');
-
         $user = $userId ? User::find($userId) : null;
-
         return $user ? "Stok Barang {$user->name}" : 'Stok Barang';
     }
 
