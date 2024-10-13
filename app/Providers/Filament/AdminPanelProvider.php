@@ -93,17 +93,14 @@ class AdminPanelProvider extends PanelProvider
                 ->url(fn() => ItemResource::getUrl('index', ['id' => Auth::user()->id])),
         ];
 
-        $customNavigationItems = [];
-
         $customNavigationItems = User::all()
-            ->reject(fn($user) => $user->id === 1)
             ->map(
                 fn(User $user) => NavigationItem::make($user->name)
                     ->group('Stok Barang Bidang')
                     ->icon('heroicon-s-cube')
                     ->isActiveWhen(fn() => request()->fullUrlIs(ItemResource::getUrl('index', ['id' => $user->id])))
                     ->url(fn() => ItemResource::getUrl('index', ['id' => $user->id]))
-                    ->visible(fn() => Auth::user()->role === 'super-admin')
+                    ->visible(fn() => Auth::user()->role === 'super-admin' &&  $user->id !== Auth::user()->id),
             )
             ->toArray();
 
