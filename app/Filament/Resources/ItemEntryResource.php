@@ -28,7 +28,7 @@ class ItemEntryResource extends Resource
 
     protected static ?string $pluralModelLabel = 'barang masuk';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 4;
 
     public static function form(Form $form): Form
     {

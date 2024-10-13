@@ -34,7 +34,6 @@ class AdminPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->brandName(fn() => Auth::user()->role)
             ->default()
             ->id('admin')
             ->path('admin')
@@ -69,8 +68,8 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class, // Enforce authentication here
             ])
 
-            // ->brandLogo(asset('images/bpsdm.png'))
-            // ->brandLogoHeight('2.5rem')
+            ->brandLogo(asset('images/bpsdm.png'))
+            ->brandLogoHeight('2.5rem')
             ->spa()
             ->sidebarWidth('300px')
 

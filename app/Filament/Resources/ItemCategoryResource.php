@@ -24,7 +24,7 @@ class ItemCategoryResource extends Resource
 
     protected static ?string $pluralModelLabel = 'kategori barang';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 6;
 
     public static function form(Form $form): Form
     {
