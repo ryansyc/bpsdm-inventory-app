@@ -19,7 +19,7 @@ class ListItemExits extends ListRecords
 {
     protected static string $resource = ItemExitResource::class;
 
-    protected ?Item $item = null;
+    protected ?Item $item_in_stock = null;
 
     protected function getHeaderActions(): array
     {
@@ -29,11 +29,11 @@ class ListItemExits extends ListRecords
                 ->modalWidth('md')
 
                 ->before(function (array $data) {
-                    $this->item = Item::where('user_id', Auth::id())
+                    $this->item_in_stock = Item::where('user_id', Auth::id())
                         ->where('name', $data['name'])
                         ->first();
 
-                    if (!$this->item) {
+                    if (!$this->item_in_stock) {
                         Notification::make()
                             ->title('Barang tidak ditemukan')
                             ->danger()
@@ -42,7 +42,7 @@ class ListItemExits extends ListRecords
                         $this->halt();
                     }
 
-                    if ($this->item->quantity < $data['quantity']) {
+                    if ($this->item_in_stock->quantity < $data['quantity']) {
                         Notification::make()
                             ->title('Stok tidak mencukupi')
                             ->danger()
@@ -58,29 +58,50 @@ class ListItemExits extends ListRecords
                 })
 
                 ->using(function (array $data): Model {
-                    $total_price = $data['quantity'] * $this->item->price;
-                    $this->item->decrement('quantity', $data['quantity']);
-                    $this->item->decrement('total_price', $total_price);
+                    $total_price = $data['quantity'] * $this->item_in_stock->price;
+                    $this->item_in_stock->decrement('quantity', $data['quantity']);
+                    $this->item_in_stock->decrement('total_price', $total_price);
 
-                    if ($data['selection'] == 0) {
-                        Item::create([
-                            'code' => $this->item->code,
-                            'name' => $this->item->name,
+                    if (Auth::user()->role === 'admin') {
+                        return ItemExit::create([
+                            'item_id' => $this->item_in_stock->id,
+                            'exit_date' => $data['exit_date'],
                             'quantity' => $data['quantity'],
-                            'price' => $this->item->price,
                             'total_price' => $total_price,
-                            'category_id' => $this->item->category_id,
-                            'user_id' => User::where('name', $data['description'])->value('id'),
+                            'department' => '',
+                            'receiver' => $data['receiver'],
+                            'user_id' => Auth::id(),
                         ]);
                     }
 
-                    // Create the item exit entry
+                    $item_in_department = Item::where('code', $data['code'])
+                        ->where('user_id', $data['department'])
+                        ->first();
+
+                    if ($item_in_department) {
+                        $item_in_department->update([
+                            'quantity' => $item_in_department->quantity + $data['quantity'],
+                            'total_price' => $item_in_department->total_price + $total_price,
+                        ]);
+                    } else {
+                        Item::create([
+                            'code' => $data['code'],
+                            'name' => $data['name'],
+                            'quantity' => $data['quantity'],
+                            'price' => $this->item_in_stock->price,
+                            'total_price' => $total_price,
+                            'category_id' => $this->item_in_stock->category_id,
+                            'user_id' => $data['department'],
+                        ]);
+                    }
+
                     return ItemExit::create([
-                        'item_id' => $this->item->id,
+                        'item_id' => $this->item_in_stock->id,
                         'exit_date' => $data['exit_date'],
                         'quantity' => $data['quantity'],
                         'total_price' => $total_price,
-                        'description' => $data['description'],
+                        'department' => User::where('id', $data['department'])->value('name'),
+                        'receiver' => $data['receiver'],
                         'user_id' => Auth::id(),
                     ]);
                 }),

@@ -13,7 +13,8 @@ class ItemExit extends Model
         'exit_date',
         'item_id',
         'quantity',
-        'description',
+        'department',
+        'receiver',
         'user_id',
         'total_price',
     ];

@@ -7,6 +7,7 @@ use App\Filament\Resources\ItemExitResource\RelationManagers;
 use App\Models\ItemExit;
 use App\Models\User;
 use App\Models\Item;
+use App\Models\Submission;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
@@ -49,6 +50,7 @@ class ItemExitResource extends Resource
                     ->options(Item::where('user_id', Auth::id())->pluck('name', 'name'))
                     ->placeholder('-')
                     ->required()
+                    ->searchable()
                     ->live()
                     ->afterStateUpdated(function (Set $set, $state) {
                         $set('code', Item::where('name', $state)->value('code'));
@@ -60,31 +62,44 @@ class ItemExitResource extends Resource
                     ->minValue(1)
                     ->numeric(),
 
-                Forms\Components\Radio::make('selection')
-                    ->label('Pilih Penerima')
-                    ->options([
-                        0 => 'Gudang',
-                        1 => 'Orang',
-                    ])
-                    ->default(0)
-                    ->live()
-                    ->required(),
+                // Forms\Components\Radio::make('selection')
+                //     ->label('Pilih Penerima')
+                //     ->options([
+                //         0 => 'Gudang',
+                //         1 => 'Orang',
+                //     ])
+                //     ->default(0)
+                //     ->live()
+                //     ->required(),
 
-                Forms\Components\Select::make('description')
-                    ->label('Pilih Gudang')
-                    ->options(User::where('id', '!=', 1)->pluck('name', 'name'))
+                Forms\Components\Select::make('department')
+                    ->label('Bidang Penerima')
+                    ->options(User::where('id', '!=', Auth::id())->pluck('name', 'id'))
                     ->placeholder('-')
                     ->required()
-                    ->visible(function (Forms\Get $get) {
-                        return $get('selection') == 0;
-                    }),
+                    ->searchable()
+                    ->live()
+                    ->visible(Auth::user()->role === 'super-admin'),
 
-                Forms\Components\TextInput::make('description')
+                Forms\Components\Select::make('receiver')
+                    ->label('Nama Penerima')
+                    ->options(function (callable $get) {
+                        $selectedDepartmentId = $get('department');
+                        return Submission::where('user_id', $selectedDepartmentId)
+                            ->pluck('name', 'name');
+                    })
+                    ->placeholder('-')
+                    ->required()
+                    ->searchable()
+                    ->disabled(function (Forms\Get $get) {
+                        return $get('department') === null;
+                    })
+                    ->visible(Auth::user()->role === 'super-admin'),
+
+                Forms\Components\TextInput::make('receiver')
                     ->label('Nama Penerima')
                     ->required()
-                    ->visible(function (Forms\Get $get) {
-                        return $get('selection') == 1;
-                    })
+                    ->visible(Auth::user()->role === 'admin'),
             ]);
     }
     public static function table(Table $table): Table
@@ -120,11 +135,15 @@ class ItemExitResource extends Resource
                     ->formatStateUsing(fn($state) => 'Rp ' . number_format($state, 0, ',', '.'))
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('description')
-                    ->label('Deskripsi')
+                Tables\Columns\TextColumn::make('department')
+                    ->label('Bidang')
+                    ->searchable()
+                    ->sortable()
+                    ->visible(Auth::user()->role === 'super-admin'),
+                Tables\Columns\TextColumn::make('receiver')
+                    ->label('Penerima')
                     ->searchable()
                     ->sortable(),
-
             ])
             ->modifyQueryUsing(function (Builder $query) {
                 return $query->where('user_id', Auth::id());

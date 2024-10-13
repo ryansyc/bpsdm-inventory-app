@@ -57,7 +57,7 @@ class ItemEntryResource extends Resource
                     ->minValue(0)
                     ->numeric(),
                 Forms\Components\TextInput::make('description')
-                    ->label('Deskripsi')
+                    ->label('Keterangan')
                     ->required()
                     ->maxLength(255),
             ]);
@@ -97,7 +97,7 @@ class ItemEntryResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('description')
-                    ->label('Deskripsi')
+                    ->label('Keterangan')
                     ->searchable()
                     ->sortable(),
             ])

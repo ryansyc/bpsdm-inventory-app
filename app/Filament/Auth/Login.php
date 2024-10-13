@@ -7,6 +7,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Component;
 use Filament\Pages\Auth\Login as BaseAuth;
 use Illuminate\Validation\ValidationException;
+use Filament\Notifications\Notification; // Import the Notification class
 
 class Login extends BaseAuth
 {
@@ -35,12 +36,19 @@ class Login extends BaseAuth
     {
         return [
             'name' => $data['name'],
-            'password'  => $data['password'],
+            'password' => $data['password'],
         ];
     }
 
     protected function throwFailureValidationException(): never
     {
+        // Show a notification for invalid login
+        Notification::make()
+            ->title('Login Failed')
+            ->body(__('Invalid username or password. Please try again.')) // Custom error message
+            ->danger() // Set notification style to danger
+            ->send();
+
         throw ValidationException::withMessages([
             'data.login' => __('filament-panels::pages/auth/login.messages.failed'),
         ]);

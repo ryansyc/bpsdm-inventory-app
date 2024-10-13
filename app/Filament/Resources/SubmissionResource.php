@@ -45,8 +45,10 @@ class SubmissionResource extends Resource
                     ->maxLength(255),
                 Forms\Components\FileUpload::make('file')
                     ->directory('uploads/pdf_dokumen')
-                    ->preserveFilenames()
-                    ->required(),
+                    ->required()
+                    ->getUploadedFileNameForStorageUsing(
+                        fn($file): string => now()->format('ymdHis') . '-' . $file->getClientOriginalName()
+                    ),
                 Forms\Components\Textarea::make('description')
                     ->columnSpanFull()
                     ->hiddenOn('create'),
@@ -80,6 +82,10 @@ class SubmissionResource extends Resource
                     ->openUrlInNewTab()
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('description')
+                    ->label('Keterangan')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
                     ->badge()
@@ -101,17 +107,21 @@ class SubmissionResource extends Resource
                             default => 'gray',
                         };
                     }),
-                Tables\Columns\TextColumn::make('description')
-                    ->label('Keterangan')
-                    ->searchable()
-                    ->sortable(),
             ])
+            ->modifyQueryUsing(function (Builder $query) {
+                if (Auth::user()->role !== 'super-admin') {
+                    return $query->where('user_id', Auth::id());
+                }
+
+                return $query;
+            })
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
                     ->modalHeading('Ubah Pengajuan')
+                    ->modalWidth('sm')
                     ->color('warning')
                     ->authorize('edit', Submission::class)
                     ->action(function (Submission $record, array $data) {
@@ -127,6 +137,7 @@ class SubmissionResource extends Resource
                     }),
                 Tables\Actions\Action::make('reject')
                     ->modalHeading('Alasan Penolakan')
+                    ->modalWidth('sm')
                     ->label('Reject')
                     ->icon('heroicon-s-x-circle')
                     ->color('danger')

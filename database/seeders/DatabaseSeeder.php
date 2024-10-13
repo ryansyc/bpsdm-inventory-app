@@ -80,7 +80,8 @@ class DatabaseSeeder extends Seeder
             'exit_date' => now(),
             'item_id' => 1,
             'quantity' => 10,
-            'description' => 'Andi',
+            'department' => 'Gudang 1',
+            'receiver' => 'Andi',
             'user_id' => 1,
             'total_price' => 100000
         ]);
@@ -108,7 +109,8 @@ class DatabaseSeeder extends Seeder
             'exit_date' => now(),
             'item_id' => 2,
             'quantity' => 5,
-            'description' => 'Andi',
+            'department' => 'Gudang 1',
+            'receiver' => 'Andi',
             'user_id' => 1,
             'total_price' => 25000
         ]);
@@ -136,7 +138,8 @@ class DatabaseSeeder extends Seeder
             'exit_date' => now(),
             'item_id' => 3,
             'quantity' => 20,
-            'description' => 'Andi',
+            'department' => 'Gudang 1',
+            'receiver' => 'Andi',
             'user_id' => 1,
             'total_price' => 60000
         ]);
@@ -164,7 +167,8 @@ class DatabaseSeeder extends Seeder
             'exit_date' => now(),
             'item_id' => 4,
             'quantity' => 20,
-            'description' => 'Andi',
+            'department' => 'Gudang 1',
+            'receiver' => 'Andi',
             'user_id' => 1,
             'total_price' => 40000
         ]);
@@ -192,7 +196,8 @@ class DatabaseSeeder extends Seeder
             'exit_date' => now(),
             'item_id' => 4,
             'quantity' => 5,
-            'description' => 'Andi',
+            'department' => 'Gudang 1',
+            'receiver' => 'Andi',
             'user_id' => 1,
             'total_price' => 30000
         ]);

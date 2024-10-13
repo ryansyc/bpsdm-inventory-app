@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('position');
             $table->string('file');
             $table->string('status');
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
