@@ -31,7 +31,7 @@ class EmptyItemsWidget extends BaseWidget
                     ->alignCenter()
                     ->width('60px'),
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Nama Barang')
+                    ->label('Nama')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('category.name')

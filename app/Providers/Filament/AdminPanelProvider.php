@@ -22,16 +22,19 @@ use Filament\Navigation\NavigationItem;
 use App\Filament\Resources\ItemResource;
 use App\Models\User;
 use Filament\Navigation\NavigationGroup;
+use Illuminate\Support\Facades\Auth;
 use App\Filament\Widgets\ItemsWidget;
 use Filament\Pages\Dashboard;
 use App\Filament\Resources\UserResource;
 use Filament\View\LegacyComponents\Widget;
+use Illuminate\Auth\AuthManager;
 
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
         return $panel
+            ->brandName(fn() => Auth::user()->role)
             ->default()
             ->id('admin')
             ->path('admin')
@@ -51,21 +54,23 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([])
             ->middleware([
+                // Start the session before anything else
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
-                StartSession::class,
-                AuthenticateSession::class,
-                ShareErrorsFromSession::class,
-                VerifyCsrfToken::class,
-                SubstituteBindings::class,
-                DisableBladeIconComponents::class,
-                DispatchServingFilamentEvent::class,
+                StartSession::class,                   // Start session first
+                AuthenticateSession::class,            // Authenticate the session
+                ShareErrorsFromSession::class,         // Handle error sharing for validation
+                VerifyCsrfToken::class,                // CSRF protection middleware
+                SubstituteBindings::class,             // Resolve route-model bindings
+                DisableBladeIconComponents::class,     // Filament-specific middleware
+                DispatchServingFilamentEvent::class,   // Filament-specific event middleware
             ])
             ->authMiddleware([
-                Authenticate::class,
+                Authenticate::class, // Enforce authentication here
             ])
-            ->brandLogo(asset('images/bpsdm.png'))
-            ->brandLogoHeight('2.5rem')
+
+            // ->brandLogo(asset('images/bpsdm.png'))
+            // ->brandLogoHeight('2.5rem')
             ->spa()
             ->sidebarWidth('300px')
 
@@ -79,20 +84,18 @@ class AdminPanelProvider extends PanelProvider
             ->navigationItems(self::getNavigationItems());
     }
 
-
     public static function getNavigationItems(): array
     {
-        // Get built-in resource navigation items
         $defaultNavigationItems = [
             NavigationItem::make('Stok Barang')
-                ->group('Gudang Utama')
                 ->icon('heroicon-s-cube')
-                ->isActiveWhen(fn() => request()->fullUrlIs(ItemResource::getUrl('index', ['id' => 1])))
+                ->isActiveWhen(fn() => request()->fullUrlIs(ItemResource::getUrl('index', ['id' => Auth::user()->id])))
                 ->sort(2)
-                ->url(fn() => ItemResource::getUrl('index', ['id' => 1])),
+                ->url(fn() => ItemResource::getUrl('index', ['id' => Auth::user()->id])),
         ];
 
-        // Create custom navigation items based on users
+        $customNavigationItems = [];
+
         $customNavigationItems = User::all()
             ->reject(fn($user) => $user->id === 1)
             ->map(
@@ -101,10 +104,11 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-s-cube')
                     ->isActiveWhen(fn() => request()->fullUrlIs(ItemResource::getUrl('index', ['id' => $user->id])))
                     ->url(fn() => ItemResource::getUrl('index', ['id' => $user->id]))
+                    ->visible(fn() => Auth::user()->role === 'super-admin')
             )
             ->toArray();
 
-        // Merge the built-in resource navigation at the beginning
+
         return array_merge($defaultNavigationItems, $customNavigationItems);
     }
 }
