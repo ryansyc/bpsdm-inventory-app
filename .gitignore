@@ -4,7 +4,9 @@
 /public/hot
 /public/storage
 /storage/*.key
-/vendor
+/vendor/*
+!vendor/filament/
+!vendor/filament/**
 .env.backup
 .env.production
 .phpactor.json
