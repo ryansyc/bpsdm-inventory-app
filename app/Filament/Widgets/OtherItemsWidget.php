@@ -7,19 +7,21 @@ use Illuminate\Support\Facades\Auth;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use App\Filament\Resources\UserResource;
 
-class ItemsWidget extends BaseWidget
+class OtherItemsWidget extends BaseWidget
 {
-    protected static ?int $sort = 1;
+    protected static ?int $sort = 3;
 
-    protected static ?string $heading = 'Stok Barang';
+    protected int | string | array $columnSpan = 'full';
 
+    protected static ?string $heading = 'Stok Barang Bidang';
     public function table(Table $table): Table
     {
         return $table
             ->query(
-                fn() => ItemResource::getEloquentQuery()
-                    ->where('user_id', Auth::id())
+                fn(): \Illuminate\Database\Eloquent\Builder => ItemResource::getEloquentQuery()
+                    ->where('user_id', '!=', Auth::id())
                     ->where('quantity', '>', 0)
             )
             ->defaultPaginationPageOption(5)
@@ -35,6 +37,10 @@ class ItemsWidget extends BaseWidget
                     ->sortable(),
                 Tables\Columns\TextColumn::make('category.name')
                     ->label('Kategori')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Bidang')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('quantity')
@@ -62,6 +68,20 @@ class ItemsWidget extends BaseWidget
                             $state >= 10 => 'success',
                         }
                     )
+            ])
+            ->filters([
+                Tables\Filters\SelectFilter::make('user.name')
+                    ->label('Bidang')
+                    ->options(
+                        UserResource::getEloquentQuery()
+                            ->where('id', '!=', Auth::id())
+                            ->pluck('name', 'id')
+                    )
             ]);
+    }
+
+    public static function canView(): bool
+    {
+        return in_array(Auth::user()->role, ['super-admin']);
     }
 }
