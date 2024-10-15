@@ -10,6 +10,7 @@ use App\Models\ItemCategory;
 use App\Models\Item;
 use App\Models\ItemEntry;
 use App\Models\ItemExit;
+use App\Models\Department;
 
 class DatabaseSeeder extends Seeder
 {
@@ -213,5 +214,26 @@ class DatabaseSeeder extends Seeder
             'user_id' => 1,
             'total_price' => 30000
         ]);
+
+        // insert Departement
+        $departments = [
+            'Bidang SPAK',
+            'Bidang PKTI',
+            'Bidang PKM',
+            'Bidang Sekretariat',
+            'Command Center',
+            'Perpustakaan',
+            'Gedung Twin Tower',
+            'Gedung Aula Utama',
+            'Gedung Kelas',
+        ];
+
+        foreach ($departments as $departmentName) {
+            Department::create([  // Pastikan menggunakan nama yang tepat
+                'name' => $departmentName,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
     }
 }
