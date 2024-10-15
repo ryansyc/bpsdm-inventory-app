@@ -9,7 +9,7 @@ class ItemCategory extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name','code'];
 
     // Define the relationship with Item
     public function items()
