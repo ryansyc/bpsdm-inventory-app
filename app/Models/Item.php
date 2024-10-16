@@ -12,23 +12,18 @@ class Item extends Model
     protected $fillable = [
         'code',
         'name',
-        'category_id',
         'quantity',
-        'price',
+        'unit',
+        'unit_quantity',
+        'unit_price',
         'total_price',
-        'user_id',
+        'category_id',
     ];
 
     // Define the relationship with ItemCategory
     public function category()
     {
         return $this->belongsTo(ItemCategory::class, 'category_id');
-    }
-
-    // Define the relationship with User
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id');
     }
 
     // Define the relationship with ItemEntry

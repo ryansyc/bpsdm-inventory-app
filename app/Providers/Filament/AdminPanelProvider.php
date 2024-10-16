@@ -5,12 +5,10 @@ namespace App\Providers\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use App\Filament\Auth\Login;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -18,16 +16,13 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Filament\Navigation\NavigationItem;
-use App\Filament\Resources\ItemResource;
-use App\Models\User;
+use App\Filament\Auth\Login;
+use App\Models\Department;
+use App\Filament\Resources\ItemEntryResource;
+use App\Models\ItemExit;
 use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
 use Illuminate\Support\Facades\Auth;
-use App\Filament\Widgets\ItemsWidget;
-use Filament\Pages\Dashboard;
-use App\Filament\Resources\UserResource;
-use Filament\View\LegacyComponents\Widget;
-use Illuminate\Auth\AuthManager;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -53,33 +48,24 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([])
             ->middleware([
-                // Start the session before anything else
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
-                StartSession::class,                   // Start session first
-                AuthenticateSession::class,            // Authenticate the session
-                ShareErrorsFromSession::class,         // Handle error sharing for validation
-                VerifyCsrfToken::class,                // CSRF protection middleware
-                SubstituteBindings::class,             // Resolve route-model bindings
-                DisableBladeIconComponents::class,     // Filament-specific middleware
-                DispatchServingFilamentEvent::class,   // Filament-specific event middleware
+                StartSession::class,
+                AuthenticateSession::class,
+                ShareErrorsFromSession::class,
+                VerifyCsrfToken::class,
+                SubstituteBindings::class,
+                DisableBladeIconComponents::class,
+                DispatchServingFilamentEvent::class,
             ])
             ->authMiddleware([
-                Authenticate::class, // Enforce authentication here
+                Authenticate::class,
             ])
 
             ->brandLogo(asset('images/bpsdm.png'))
             ->brandLogoHeight('2.5rem')
             ->spa()
             ->sidebarWidth('300px')
-
-            ->navigationGroups([
-                NavigationGroup::make()
-                    ->label('Gudang Utama'),
-                NavigationGroup::make()
-                    ->label('Stok Barang Bidang')
-            ])
-
             ->navigationItems(self::getNavigationItems());
     }
 
@@ -88,19 +74,18 @@ class AdminPanelProvider extends PanelProvider
         $defaultNavigationItems = [
             NavigationItem::make('Stok Barang')
                 ->icon('heroicon-s-cube')
-                ->isActiveWhen(fn() => request()->fullUrlIs(ItemResource::getUrl('index', ['id' => Auth::user()->id])))
+                ->isActiveWhen(fn() => request()->fullUrlIs(ItemEntryResource::getUrl('index', ['id' => Auth::user()->department_id])))
                 ->sort(2)
-                ->url(fn() => ItemResource::getUrl('index', ['id' => Auth::user()->id])),
+                ->url(fn() => ItemEntryResource::getUrl('index', ['id' => Auth::user()->department_id])),
         ];
 
-        $customNavigationItems = User::all()
+        $customNavigationItems = Department::all()
             ->map(
-                fn(User $user) => NavigationItem::make($user->name)
-                    ->group('Stok Barang Bidang')
+                fn(Department $department) => NavigationItem::make($department->name)
+                    ->group('Bidang')
                     ->icon('heroicon-s-cube')
-                    ->isActiveWhen(fn() => request()->fullUrlIs(ItemResource::getUrl('index', ['id' => $user->id])))
-                    ->url(fn() => ItemResource::getUrl('index', ['id' => $user->id]))
-                    ->visible(fn() => Auth::user()->role === 'super-admin' &&  $user->id !== Auth::user()->id),
+                    ->isActiveWhen(fn() => request()->fullUrlIs(ItemEntryResource::getUrl('index', ['id' => $department->id])))
+                    ->url(fn() => ItemEntryResource::getUrl('index', ['id' => $department->id]))
             )
             ->toArray();
 

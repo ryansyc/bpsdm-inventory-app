@@ -10,13 +10,14 @@ class ItemExit extends Model
     use HasFactory;
 
     protected $fillable = [
-        'exit_date',
-        'item_id',
+        'date',
+        'unit',
         'quantity',
-        'department',
-        'receiver',
-        'user_id',
         'total_price',
+        'provider',
+        'receiver',
+        'department_id',
+        'item_id',
     ];
 
     public function item()
@@ -24,8 +25,8 @@ class ItemExit extends Model
         return $this->belongsTo(Item::class, 'item_id');
     }
 
-    public function user()
+    public function department()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Department::class, 'department_id');
     }
 }

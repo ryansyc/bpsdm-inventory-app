@@ -10,12 +10,12 @@ class ItemEntry extends Model
     use HasFactory;
 
     protected $fillable = [
-        'entry_date',
-        'item_id',
+        'date',
+        'unit',
         'quantity',
-        'description',
-        'user_id',
         'total_price',
+        'file',
+        'item_id',
     ];
 
     public function item()
