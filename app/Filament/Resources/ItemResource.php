@@ -23,9 +23,13 @@ class ItemResource extends Resource
 {
     protected static ?string $model = Item::class;
 
+    protected static ?string $navigationIcon = 'heroicon-s-tag';
+
     protected static ?string $slug = 'stok-barang';
 
-    protected static bool $shouldRegisterNavigation = false;
+    protected static ?string $pluralModelLabel = 'stok barang';
+
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {
@@ -161,19 +165,6 @@ class ItemResource extends Resource
                         }),
                 ]),
             ]);
-    }
-
-    protected static function applyFilter($query)
-    {
-        $bidang = request()->query('id');
-        return $query->where('user_id', $bidang);
-    }
-
-    public static function getPluralModelLabel(): string
-    {
-        $userId = request()->query('id');
-        $user = $userId ? User::find($userId) : null;
-        return $user ? "Stok Barang {$user->name}" : 'Stok Barang';
     }
 
     public static function getRelations(): array

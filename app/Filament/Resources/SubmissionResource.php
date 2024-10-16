@@ -28,8 +28,6 @@ class SubmissionResource extends Resource
 
     protected static ?int $navigationSort = 3;
 
-
-
     public static function form(Form $form): Form
     {
         return $form
@@ -108,13 +106,6 @@ class SubmissionResource extends Resource
                         };
                     }),
             ])
-            ->modifyQueryUsing(function (Builder $query) {
-                if (Auth::user()->role !== 'super-admin') {
-                    return $query->where('user_id', Auth::id());
-                }
-
-                return $query;
-            })
             ->filters([
                 //
             ])
@@ -160,15 +151,6 @@ class SubmissionResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    public static function getNavigationBadge(): ?string
-    {
-        if (Auth::user()->role === 'super-admin') {
-            return static::getModel()::where('status', 'pending')->count();
-        }
-
-        return null;
     }
 
     public static function getRelations(): array

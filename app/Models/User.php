@@ -65,13 +65,8 @@ class User extends Authenticatable
         return $this->hasMany(Submission::class, 'user_id');
     }
 
-    public function isSuperAdmin()
+    public function department()
     {
-        return $this->role === 'super-admin';
-    }
-
-    public function isAdmin()
-    {
-        return $this->role === 'admin';
+        return $this->belongsTo(Department::class, 'department_id');
     }
 }

@@ -19,26 +19,22 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $users = [['name' => 'Gudang Utama', 'password' => Hash::make('password'), 'department' => 'Gudang Utama']];
 
-        User::create([
-            'name' => 'Gudang Utama',
-            'password' => Hash::make('password'),
-            'role' => 'super-admin',
-        ]);
+        $departments = [
+            'Bidang PKM',
+            'Bidang PKTI',
+            'Bidang Sekretariat',
+            'Bidang SPAK',
+            'Cleaning Service',
+            'Command Center',
+            'Gedung Aula Utama',
+            'Gedung Kelas',
+            'Gedung Twin Tower',
+            'Gudang Utama',
+            'Perpustakaan'
+        ];
 
-        User::create([
-            'name' => 'Gudang 1',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-        ]);
-
-        User::create([
-            'name' => 'Gudang 2',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-        ]);
-
-        // Insert data ke tabel item_categories
         $categories = [
             ['code' => '5.1.02.01.01', 'name' => 'Belanja Barang Pakai Habis'],
             ['code' => '5.1.02.01.0001', 'name' => 'Belanja Bahan-Bahan Bangunan dan Konstruksi'],
@@ -66,174 +62,16 @@ class DatabaseSeeder extends Seeder
             ['code' => '5.1.02.01.0064', 'name' => 'Belanja Pakaian Dinas Lapangan (PDL)']
         ];
 
+        foreach ($users as $user) {
+            User::create($user);
+        }
+
         foreach ($categories as $category) {
             ItemCategory::create($category);
         }
 
-        Item::create([
-            'code' => 'ABC123',
-            'name' => 'Laptop',
-            'category_id' => 1,
-            'quantity' => 10,
-            'user_id' => 1,
-            'price' => 10000,
-            'total_price' => 100000
-        ]);
-
-        ItemEntry::create([
-            'entry_date' => now(),
-            'item_id' => 1,
-            'quantity' => 20,
-            'description' => 'Andi',
-            'user_id' => 1,
-            'total_price' => 200000
-        ]);
-
-        ItemExit::create([
-            'exit_date' => now(),
-            'item_id' => 1,
-            'quantity' => 10,
-            'department' => 'Gudang 1',
-            'receiver' => 'Andi',
-            'user_id' => 1,
-            'total_price' => 100000
-        ]);
-
-        Item::create([
-            'code' => 'XYZ456',
-            'name' => 'Monitor',
-            'category_id' => 2,
-            'quantity' => 15,
-            'user_id' => 1,
-            'price' => 5000,
-            'total_price' => 75000
-        ]);
-
-        ItemEntry::create([
-            'entry_date' => now(),
-            'item_id' => 2,
-            'quantity' => 20,
-            'description' => 'Andi',
-            'user_id' => 1,
-            'total_price' => 100000
-        ]);
-
-        ItemExit::create([
-            'exit_date' => now(),
-            'item_id' => 2,
-            'quantity' => 5,
-            'department' => 'Gudang 1',
-            'receiver' => 'Andi',
-            'user_id' => 1,
-            'total_price' => 25000
-        ]);
-
-        Item::create([
-            'code' => 'DEF789',
-            'name' => 'Keyboard',
-            'category_id' => 3,
-            'quantity' => 50,
-            'user_id' => 1,
-            'price' => 3000,
-            'total_price' => 150000
-        ]);
-
-        ItemEntry::create([
-            'entry_date' => now(),
-            'item_id' => 3,
-            'quantity' => 70,
-            'description' => 'Andi',
-            'user_id' => 1,
-            'total_price' => 210000
-        ]);
-
-        ItemExit::create([
-            'exit_date' => now(),
-            'item_id' => 3,
-            'quantity' => 20,
-            'department' => 'Gudang 1',
-            'receiver' => 'Andi',
-            'user_id' => 1,
-            'total_price' => 60000
-        ]);
-
-        Item::create([
-            'code' => 'GHI101',
-            'name' => 'Mouse',
-            'category_id' => 1,
-            'quantity' => 100,
-            'user_id' => 1,
-            'price' => 2000,
-            'total_price' => 200000
-        ]);
-
-        ItemEntry::create([
-            'entry_date' => now(),
-            'item_id' => 4,
-            'quantity' => 120,
-            'description' => 'Andi',
-            'user_id' => 1,
-            'total_price' => 240000
-        ]);
-
-        ItemExit::create([
-            'exit_date' => now(),
-            'item_id' => 4,
-            'quantity' => 20,
-            'department' => 'Gudang 1',
-            'receiver' => 'Andi',
-            'user_id' => 1,
-            'total_price' => 40000
-        ]);
-
-        Item::create([
-            'code' => 'JKL102',
-            'name' => 'Printer',
-            'category_id' => 2,
-            'quantity' => 5,
-            'user_id' => 1,
-            'price' => 6000,
-            'total_price' => 30000
-        ]);
-
-        ItemEntry::create([
-            'entry_date' => now(),
-            'item_id' => 4,
-            'quantity' => 10,
-            'description' => 'Andi',
-            'user_id' => 1,
-            'total_price' => 60000
-        ]);
-
-        ItemExit::create([
-            'exit_date' => now(),
-            'item_id' => 4,
-            'quantity' => 5,
-            'department' => 'Gudang 1',
-            'receiver' => 'Andi',
-            'user_id' => 1,
-            'total_price' => 30000
-        ]);
-
-        // insert Departement
-        $departments = [
-            'Bidang SPAK',
-            'Bidang PKTI',
-            'Bidang PKM',
-            'Bidang Sekretariat',
-            'Command Center',
-            'Perpustakaan',
-            'Gedung Twin Tower',
-            'Gedung Aula Utama',
-            'Gedung Kelas',
-        ];
-
-        foreach ($departments as $departmentName) {
-            Department::create([  // Pastikan menggunakan nama yang tepat
-                'name' => $departmentName,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+        foreach ($departments as $department) {
+            Department::create([$department]);
         }
     }
 }

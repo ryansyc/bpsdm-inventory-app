@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\DatePicker;
+use App\Models\Department;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ItemEntryResource extends Resource
@@ -24,11 +25,7 @@ class ItemEntryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-s-arrow-down-tray';
 
-    protected static ?string $slug = 'barang-masuk';
-
-    protected static ?string $pluralModelLabel = 'barang masuk';
-
-    protected static ?int $navigationSort = 4;
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function form(Form $form): Form
     {
@@ -129,6 +126,19 @@ class ItemEntryResource extends Resource
                 // ]),
             ]);
     }
+
+    protected static function applyFilter($query)
+    {
+        return $query->where('department_id', request()->query('id'));
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        $department_id = request()->query('id');
+        $department = $department_id ? Department::find($department_id) : null;
+        return $department ? "Barang Masuk {$department->name}" : 'Barang Masuk';
+    }
+
     public static function getRelations(): array
     {
         return [

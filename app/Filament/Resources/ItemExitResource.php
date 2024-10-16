@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\DatePicker;
+use App\Models\Department;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ItemExitResource extends Resource
@@ -78,8 +79,7 @@ class ItemExitResource extends Resource
                     ->placeholder('-')
                     ->required()
                     ->searchable()
-                    ->live()
-                    ->visible(Auth::user()->role === 'super-admin'),
+                    ->live(),
 
                 Forms\Components\Select::make('receiver')
                     ->label('Nama Penerima')
@@ -93,8 +93,7 @@ class ItemExitResource extends Resource
                     ->searchable()
                     ->disabled(function (Forms\Get $get) {
                         return $get('department') === null;
-                    })
-                    ->visible(Auth::user()->role === 'super-admin'),
+                    }),
 
                 Forms\Components\TextInput::make('receiver')
                     ->label('Nama Penerima')
@@ -138,8 +137,8 @@ class ItemExitResource extends Resource
                 Tables\Columns\TextColumn::make('department')
                     ->label('Bidang')
                     ->searchable()
-                    ->sortable()
-                    ->visible(Auth::user()->role === 'super-admin'),
+                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('receiver')
                     ->label('Penerima')
                     ->searchable()
@@ -173,6 +172,7 @@ class ItemExitResource extends Resource
                 // ]),
             ]);
     }
+
     public static function getRelations(): array
     {
         return [
