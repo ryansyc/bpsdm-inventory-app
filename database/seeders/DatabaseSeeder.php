@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\Category;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
@@ -11,6 +13,7 @@ use App\Models\Item;
 use App\Models\ItemEntry;
 use App\Models\ItemExit;
 use App\Models\Department;
+use Illuminate\Support\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
@@ -19,20 +22,20 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $users = [['name' => 'Gudang Utama', 'password' => Hash::make('password'), 'department' => 'Gudang Utama']];
+        $users = [['department_id' => 1, 'name' => 'Gudang BPSDM', 'password' => Hash::make('password')]];
 
         $departments = [
-            'Bidang PKM',
-            'Bidang PKTI',
-            'Bidang Sekretariat',
-            'Bidang SPAK',
-            'Cleaning Service',
-            'Command Center',
-            'Gedung Aula Utama',
-            'Gedung Kelas',
-            'Gedung Twin Tower',
-            'Gudang Utama',
-            'Perpustakaan'
+            ['name' => 'Gudang BPSDM'],
+            ['name' => 'Bidang PKM'],
+            ['name' => 'Bidang PKTI'],
+            ['name' => 'Bidang Sekretariat'],
+            ['name' => 'Bidang SPAK'],
+            ['name' => 'Cleaning Service'],
+            ['name' => 'Command Center'],
+            ['name' => 'Gedung Aula Utama'],
+            ['name' => 'Gedung Kelas'],
+            ['name' => 'Gedung Twin Tower'],
+            ['name' => 'Perpustakaan']
         ];
 
         $categories = [
@@ -62,16 +65,177 @@ class DatabaseSeeder extends Seeder
             ['code' => '5.1.02.01.0064', 'name' => 'Belanja Pakaian Dinas Lapangan (PDL)']
         ];
 
+        $items = [
+            [
+                'code' => 'ITEM001',
+                'name' => 'Laptop',
+                // 'quantity' => 10,
+                'unit' => 'pcs',
+                'unit_quantity' => 10,
+                'unit_price' => 1000,
+                'total_price' => 10000
+            ],
+            [
+                'code' => 'ITEM002',
+                'name' => 'Printer',
+                // 'quantity' => 5,
+                'unit' => 'pcs',
+                'unit_quantity' => 5,
+                'unit_price' => 500,
+                'total_price' => 2500
+            ],
+            [
+                'code' => 'ITEM003',
+                'name' => 'Mouse',
+                // 'quantity' => 20,
+                'unit' => 'pcs',
+                'unit_quantity' => 20,
+                'unit_price' => 50,
+                'total_price' => 1000
+            ],
+            [
+                'code' => 'ITEM004',
+                'name' => 'Keyboard',
+                // 'quantity' => 15,
+                'unit' => 'pcs',
+                'unit_quantity' => 15,
+                'unit_price' => 80,
+                'total_price' => 1200
+            ],
+            [
+                'code' => 'ITEM005',
+                'name' => 'Monitor',
+                // 'quantity' => 8,
+                'unit' => 'pcs',
+                'unit_quantity' => 8,
+                'unit_price' => 300,
+                'total_price' => 2400
+            ],
+        ];
+
+        // $itemEntries = [
+        //     [
+        //         'category_id' => rand(1, 24),
+        //         'item_id' => rand(1, 5),
+        //         'date' => Carbon::now(),
+        //         'unit' => 'pcs',
+        //         'unit_quantity' => 10,
+        //         'total_price' => 10000
+        //     ],
+        //     [
+        //         'category_id' => rand(1, 24),
+        //         'item_id' => rand(1, 5),
+        //         'date' => Carbon::now(),
+        //         'unit' => 'pcs',
+        //         'unit_quantity' => 5,
+        //         'total_price' => 2500
+        //     ],
+        //     [
+        //         'category_id' => rand(1, 24),
+        //         'item_id' => rand(1, 5),
+        //         'date' => Carbon::now(),
+        //         'unit' => 'pcs',
+        //         'unit_quantity' => 20,
+        //         'total_price' => 1000
+        //     ],
+        //     [
+        //         'category_id' => rand(1, 24),
+        //         'item_id' => rand(1, 5),
+        //         'date' => Carbon::now(),
+        //         'unit' => 'pcs',
+        //         'unit_quantity' => 15,
+        //         'total_price' => 1200
+        //     ],
+        //     [
+        //         'category_id' => rand(1, 24),
+        //         'item_id' => rand(1, 5),
+        //         'date' => Carbon::now(),
+        //         'unit' => 'pcs',
+        //         'unit_quantity' => 8,
+        //         'total_price' => 2400
+        //     ],
+        // ];
+
+        // $itemExits = [
+        //     [
+        //         'department_id' => rand(1, 11),
+        //         'category_id' => rand(1, 24),
+        //         'item_id' => rand(1, 5),
+        //         'date' => Carbon::now(),
+        //         'unit' => 'pcs',
+        //         'unit_quantity' => 2,
+        //         'total_price' => 2000,
+        //         'provider' => 'Warehouse A',
+        //         'receiver' => 'John Doe'
+        //     ],
+        //     [
+        //         'department_id' => rand(1, 11),
+        //         'category_id' => rand(1, 24),
+        //         'item_id' => rand(1, 5),
+        //         'date' => Carbon::now(),
+        //         'unit' => 'pcs',
+        //         'unit_quantity' => 1,
+        //         'total_price' => 1000,
+        //         'provider' => 'Warehouse B',
+        //         'receiver' => 'Jane Smith'
+        //     ],
+        //     [
+        //         'department_id' => rand(1, 11),
+        //         'category_id' => rand(1, 24),
+        //         'item_id' => rand(1, 5),
+        //         'date' => Carbon::now(),
+        //         'unit' => 'pcs',
+        //         'unit_quantity' => 3,
+        //         'total_price' => 150,
+        //         'provider' => 'Warehouse C',
+        //         'receiver' => 'Mike Johnson'
+        //     ],
+        //     [
+        //         'department_id' => rand(1, 11),
+        //         'category_id' => rand(1, 24),
+        //         'item_id' => rand(1, 5),
+        //         'date' => Carbon::now(),
+        //         'unit' => 'pcs',
+        //         'unit_quantity' => 4,
+        //         'total_price' => 320,
+        //         'provider' => 'Warehouse D',
+        //         'receiver' => 'Emma Brown'
+        //     ],
+        //     [
+        //         'department_id' => rand(1, 11),
+        //         'category_id' => rand(1, 24),
+        //         'item_id' => rand(1, 5),
+        //         'date' => Carbon::now(),
+        //         'unit' => 'pcs',
+        //         'unit_quantity' => 1,
+        //         'total_price' => 300,
+        //         'provider' => 'Warehouse E',
+        //         'receiver' => 'Liam Wilson'
+        //     ],
+        // ];
+
+        foreach ($departments as $department) {
+            Department::create($department);
+        }
+
         foreach ($users as $user) {
             User::create($user);
         }
 
         foreach ($categories as $category) {
-            ItemCategory::create($category);
+            Category::create($category);
         }
 
-        foreach ($departments as $department) {
-            Department::create([$department]);
+        foreach ($items as $item) {
+            Item::create($item);
         }
+
+        // foreach ($itemEntries as $itemEntry) {
+        //     ItemEntry::create($itemEntry);
+        // }
+
+        // foreach ($itemExits as $itemExit) {
+        //     ItemExit::create($itemExit);
+        // }
     }
 }

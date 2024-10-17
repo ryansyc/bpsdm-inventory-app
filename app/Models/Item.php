@@ -12,29 +12,26 @@ class Item extends Model
     protected $fillable = [
         'code',
         'name',
-        'quantity',
+        // 'quantity',
         'unit',
         'unit_quantity',
         'unit_price',
         'total_price',
-        'category_id',
     ];
+    public $timestamps = false;
 
-    // Define the relationship with ItemCategory
-    public function category()
+    public function entryItems()
     {
-        return $this->belongsTo(ItemCategory::class, 'category_id');
+        return $this->hasMany(EntryItem::class);
     }
 
-    // Define the relationship with ItemEntry
-    public function entries()
+    public function exitItems()
     {
-        return $this->hasMany(ItemEntry::class, 'item_id');
+        return $this->hasMany(ExitItem::class);
     }
 
-    // Define the relationship with ItemExit
-    public function exits()
+    public function calculateTotalPrice($quantity): int
     {
-        return $this->hasMany(ItemExit::class, 'item_id');
+        return $this->unit_price * $quantity;
     }
 }

@@ -4,29 +4,34 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Observers\FileObserver;
 
-class Submission extends Model
+class ExitInvoice extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'department_id',
+        'category_id',
         'date',
-        'name',
-        'position',
-        'file',
+        'total',
+        'provider',
+        'receiver',
     ];
-    public $timestamps = false;
 
+    public $timestamps = false;
 
     public function department()
     {
         return $this->belongsTo(Department::class);
     }
 
-    protected static function booted()
+    public function category()
     {
-        self::observe(FileObserver::class);
+        return $this->belongsTo(Category::class);
+    }
+
+    public function exitItem()
+    {
+        return $this->belongsTo(ExitItem::class);
     }
 }

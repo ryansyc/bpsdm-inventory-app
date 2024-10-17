@@ -17,10 +17,12 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'department_id',
         'name',
         'password',
-        'role',
     ];
+
+    public $timestamps = false;
 
     /**
      * The attributes that should be hidden for serialization.
@@ -40,29 +42,8 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-    }
-
-    public function items()
-    {
-        return $this->hasMany(Item::class, 'user_id');
-    }
-
-    public function entries()
-    {
-        return $this->hasMany(ItemEntry::class, 'user_id');
-    }
-
-    public function exits()
-    {
-        return $this->hasMany(ItemExit::class, 'user_id');
-    }
-
-    public function submissions()
-    {
-        return $this->hasMany(Submission::class, 'user_id');
     }
 
     public function department()
