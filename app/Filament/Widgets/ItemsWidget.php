@@ -19,11 +19,10 @@ class ItemsWidget extends BaseWidget
         return $table
             ->query(
                 fn() => ItemResource::getEloquentQuery()
-                    ->where('user_id', Auth::id())
-                    ->where('quantity', '>', 0)
+                    ->where('unit_quantity', '>', 0)
             )
             ->defaultPaginationPageOption(5)
-            ->defaultSort('quantity', 'asc')
+            ->defaultSort('unit_quantity', 'asc')
             ->columns([
                 Tables\Columns\TextColumn::make('No')
                     ->rowIndex()
@@ -33,11 +32,11 @@ class ItemsWidget extends BaseWidget
                     ->label('Nama')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('category.name')
-                    ->label('Kategori')
+                Tables\Columns\TextColumn::make('unit')
+                    ->label('Satuan')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('quantity')
+                Tables\Columns\TextColumn::make('unit_quantity')
                     ->label('Jumlah')
                     ->numeric()
                     ->searchable()
@@ -46,20 +45,20 @@ class ItemsWidget extends BaseWidget
                     ->label('Status')
                     ->badge()
                     ->getStateUsing(
-                        fn($record): int => $record->quantity
+                        fn($record): int => $record->unit_quantity
                     )
                     ->formatStateUsing(
                         fn(int $state): string => match (true) {
                             $state === 0 => 'Habis',
-                            $state > 0 && $state < 10 => 'Sedikit',
-                            $state >= 10 => 'Tersedia',
+                            $state > 0 && $state <= 5 => 'Sedikit',
+                            $state > 5 => 'Tersedia',
                         }
                     )
                     ->color(
                         fn(int $state): string => match (true) {
                             $state === 0 => 'danger',
-                            $state > 0 && $state < 10 => 'warning',
-                            $state >= 10 => 'success',
+                            $state > 0 && $state <= 5 => 'warning',
+                            $state > 5 => 'success',
                         }
                     )
             ]);

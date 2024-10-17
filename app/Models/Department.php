@@ -9,8 +9,10 @@ class Department extends Model
 {
     use HasFactory;
     protected $fillable = ['name'];
+    public $timestamps = false;
 
-    public function exits()
+
+    public function itemExits()
     {
         return $this->hasMany(ItemExit::class);
     }

@@ -11,16 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('item_exits', function (Blueprint $table) {
+        Schema::create('entry_items', function (Blueprint $table) {
             $table->id();
-            $table->dateTime('exit_date');
+            $table->foreignId('invoice_id')->constrained('entry_invoices')->onDelete('cascade');
             $table->foreignId('item_id')->constrained('items')->onDelete('cascade');
-            $table->integer('quantity')->unsigned();
-            $table->integer('total_price')->unsigned();
-            $table->string('department');
-            $table->string('receiver');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->timestamps();
+            $table->string('unit');
+            $table->unsignedInteger('unit_price');
+            $table->unsignedInteger('unit_quantity');
+            $table->unsignedInteger('total_price');
         });
     }
 
@@ -29,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('item_exits');
+        Schema::dropIfExists('entry_items');
     }
 };

@@ -21,22 +21,8 @@ class ListSubmissions extends ListRecords
                 ->modalWidth('md')
 
                 ->mutateFormDataUsing(function (array $data): array {
-                    $data['status'] = 'pending';
-                    $data['description'] = '';
+                    $data['date'] = now();
                     return $data;
-                })
-
-                ->using(function (array $data): Model {
-                    $submission = Submission::create([
-                        'name' => $data['name'],
-                        'position' => $data['position'],
-                        'file' => $data['file'],
-                        'status' => $data['status'],
-                        'description' => $data['description'],
-                        'user_id' => Auth::id(),
-                    ]);
-
-                    return $submission;
                 })
         ];
     }

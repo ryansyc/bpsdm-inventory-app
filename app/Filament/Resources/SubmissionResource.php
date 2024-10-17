@@ -13,6 +13,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use App\Models\Department;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -26,30 +27,30 @@ class SubmissionResource extends Resource
 
     protected static ?string $pluralModelLabel = 'ajuan barang';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 5;
 
     public static function form(Form $form): Form
     {
         return $form
             ->columns(1)
             ->schema([
+                Forms\Components\Select::make('department_id')
+                    ->label('Bidang')
+                    ->required()
+                    ->options(Department::pluck('name', 'id'))
+                    ->searchable(),
                 Forms\Components\TextInput::make('name')
                     ->label('Nama Lengkap')
-                    ->required()
-                    ->maxLength(255),
+                    ->required(),
                 Forms\Components\TextInput::make('position')
                     ->label('Jabatan')
-                    ->required()
-                    ->maxLength(255),
+                    ->required(),
                 Forms\Components\FileUpload::make('file')
                     ->directory('uploads/pdf_dokumen')
                     ->required()
                     ->getUploadedFileNameForStorageUsing(
                         fn($file): string => now()->format('ymdHis') . '-' . $file->getClientOriginalName()
                     ),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull()
-                    ->hiddenOn('create'),
             ]);
     }
 
@@ -61,6 +62,11 @@ class SubmissionResource extends Resource
                     ->rowIndex()
                     ->alignCenter()
                     ->width('60px'),
+                Tables\Columns\TextColumn::make('date')
+                    ->label('Tanggal')
+                    ->dateTime('Y-m-d | H:i:s')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nama')
                     ->searchable()
@@ -69,7 +75,7 @@ class SubmissionResource extends Resource
                     ->label('Jabatan')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('user.name')
+                Tables\Columns\TextColumn::make('department.name')
                     ->label('Bidang')
                     ->searchable()
                     ->sortable(),
@@ -80,72 +86,12 @@ class SubmissionResource extends Resource
                     ->openUrlInNewTab()
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('description')
-                    ->label('Keterangan')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('status')
-                    ->label('Status')
-                    ->badge()
-                    ->searchable()
-                    ->sortable()
-                    ->formatStateUsing(function (?string $state): string {
-                        return match ($state) {
-                            'pending' => 'Pending',
-                            'rejected' => 'Rejected',
-                            'approved' => 'Approved',
-                            default => 'Unknown',
-                        };
-                    })
-                    ->color(function (?string $state): string {
-                        return match ($state) {
-                            'pending' => 'warning',
-                            'rejected' => 'danger',
-                            'approved' => 'success',
-                            default => 'gray',
-                        };
-                    }),
+
             ])
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make()
-                    ->modalHeading('Ubah Pengajuan')
-                    ->modalWidth('sm')
-                    ->color('warning')
-                    ->authorize('edit', Submission::class)
-                    ->action(function (Submission $record, array $data) {
-                        $record->update(array_merge($data, ['status' => 'pending']));
-                    }),
-                Tables\Actions\Action::make('approve')
-                    ->label('Approve')
-                    ->icon('heroicon-s-check-circle')
-                    ->color('success')
-                    ->authorize('approve', Submission::class)
-                    ->action(function (Submission $record) {
-                        $record->update(['status' => 'approved']);
-                    }),
-                Tables\Actions\Action::make('reject')
-                    ->modalHeading('Alasan Penolakan')
-                    ->modalWidth('sm')
-                    ->label('Reject')
-                    ->icon('heroicon-s-x-circle')
-                    ->color('danger')
-                    ->authorize('reject', Submission::class)
-                    ->form([ // Use `form` to define form components for the action
-                        Forms\Components\Textarea::make('description')
-                            ->label('Keterangan')
-                            ->required()
-                            ->default(fn($record) => $record->description ?? ''), // Provide a default or empty string
-                    ])
-                    ->action(function (Submission $record, array $data) {
-                        $record->update([
-                            'description' => $data['description'],
-                            'status' => 'rejected',
-                        ]);
-                    }),
-            ])
+            ->actions([])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),

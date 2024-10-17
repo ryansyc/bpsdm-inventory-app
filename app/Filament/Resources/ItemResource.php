@@ -8,6 +8,8 @@ use App\Models\Item;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -44,27 +46,34 @@ class ItemResource extends Resource
                     ->label('Nama Barang')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Select::make('category_id')
-                    ->label('Kategori')
+                Forms\Components\TextInput::make('unit')
+                    ->label('Satuan')
                     ->required()
-                    ->relationship('category', 'name')
-                    ->placeholder('-'),
-                Forms\Components\TextInput::make('price')
-                    ->label('Harga Satuan')
-                    ->required()
-                    ->numeric()
-                    ->minValue(0),
-                Forms\Components\TextInput::make('quantity')
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('unit_quantity')
                     ->label('Jumlah')
                     ->required()
                     ->numeric()
                     ->minValue(0)
-                    ->disabledOn('edit'),
-                Forms\Components\TextInput::make('description')
-                    ->label('Penerima')
+                    ->live()
+                    ->afterStateUpdated(function (Get $get, Set $set) {
+                        self::calculateTotal($get, $set);
+                    }),
+                Forms\Components\TextInput::make('unit_price')
+                    ->label('Harga Satuan')
                     ->required()
-                    ->maxLength(255)
-                    ->hiddenOn('edit'),
+                    ->numeric()
+                    ->minValue(0)
+                    ->live()
+                    ->afterStateUpdated(function (Get $get, Set $set) {
+                        self::calculateTotal($get, $set);
+                    }),
+                Forms\Components\TextInput::make('total_price')
+                    ->label('Total Harga')
+                    ->required()
+                    ->numeric()
+                    ->minValue(0)
+                    ->readOnly(),
             ]);
     }
     public static function table(Table $table): Table
@@ -72,7 +81,6 @@ class ItemResource extends Resource
         return $table
             ->recordUrl(null)
             ->recordAction(null)
-            ->modifyQueryUsing(fn($query) => static::applyFilter($query))
             ->columns([
                 Tables\Columns\TextColumn::make('No')
                     ->rowIndex()
@@ -86,65 +94,65 @@ class ItemResource extends Resource
                     ->label('Nama')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('category.name')
-                    ->label('Kategori')
+                Tables\Columns\TextColumn::make('unit')
+                    ->label('Satuan')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('quantity')
+                Tables\Columns\TextColumn::make('unit_quantity')
                     ->label('Jumlah')
                     ->numeric()
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('price')
-                    ->label('Harga')
+                Tables\Columns\TextColumn::make('unit_price')
+                    ->label('Harga Satuan')
+                    ->numeric()
                     ->formatStateUsing(fn($state) => 'Rp ' . number_format($state, 0, ',', '.'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total_price')
-                    ->label('Total Harga')
+                    ->label('Total')
+                    ->numeric()
                     ->formatStateUsing(fn($state) => 'Rp ' . number_format($state, 0, ',', '.'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->getStateUsing(fn($record) => $record->quantity)
-                    ->formatStateUsing(function ($state) {
-                        if ($state === 0) {
-                            return 'Habis';
-                        } elseif ($state < 10) {
-                            return 'Sedikit';
-                        } else {
-                            return 'Tersedia';
+                    ->getStateUsing(fn($record) => $record->unit_quantity)
+                    ->formatStateUsing(
+                        fn(int $state): string => match (true) {
+                            $state === 0 => 'Habis',
+                            $state > 0 && $state <= 5 => 'Sedikit',
+                            $state > 5 => 'Tersedia',
                         }
-                    })
-                    ->color(function (string $state): string {
-                        return match (true) {
+                    )
+                    ->color(
+                        fn(int $state): string => match (true) {
                             $state === 0 => 'danger',
-                            $state < 10 => 'warning',
-                            default => 'success',
-                        };
-                    })
+                            $state > 0 && $state <= 5 => 'warning',
+                            $state > 5 => 'success',
+                        }
+                    )
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
                     ->color('warning')
+                    ->button()
                     ->modalHeading('Ubah Barang')
                     ->modalWidth('md'),
 
-                Tables\Actions\DeleteAction::make()
-                    ->action(function ($record) {
-                        if ($record->quantity > 0) {
-                            Notification::make()
-                                ->title("Stok {$record->name} masih ada")
-                                ->body("Hanya bisa menghapus saat stok kosong")
-                                ->danger()
-                                ->send();
-
-                            return;
-                        }
-                        $record->delete();
-                    }),
+                // Tables\Actions\DeleteAction::make()
+                //     ->action(function ($record) {
+                //         if ($record->quantity > 0) {
+                //             Notification::make()
+                //                 ->title("Stok {$record->name} masih ada")
+                //                 ->body("Hanya bisa menghapus saat stok kosong")
+                //                 ->danger()
+                //                 ->send();
+                //             return;
+                //         }
+                //         $record->delete();
+                //     }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -165,6 +173,12 @@ class ItemResource extends Resource
                         }),
                 ]),
             ]);
+    }
+
+    public static function calculateTotal(Get $get, Set $set): void
+    {
+        $total = $get('unit_price') * $get('unit_quantity');
+        $set('total_price',  $total);
     }
 
     public static function getRelations(): array

@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('item_categories', function (Blueprint $table) {
+        Schema::create('entry_invoices', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('code');
-            $table->timestamps();
+            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
+            $table->dateTime('date');
+            $table->unsignedInteger('total');
         });
     }
 
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('item_categories');
+        Schema::dropIfExists('entry_invoices');
     }
 };

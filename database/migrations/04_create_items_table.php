@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('submissions', function (Blueprint $table) {
+        Schema::create('items', function (Blueprint $table) {
             $table->id();
+            $table->string('code');
             $table->string('name');
-            $table->string('position');
-            $table->string('file');
-            $table->string('status');
-            $table->text('description')->nullable();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->timestamps();
+            // $table->unsignedInteger('quantity');
+            $table->string('unit');
+            $table->unsignedInteger('unit_quantity');
+            $table->unsignedInteger('unit_price');
+            $table->unsignedInteger('total_price');
         });
     }
 
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('submissions');
+        Schema::dropIfExists('items');
     }
 };
