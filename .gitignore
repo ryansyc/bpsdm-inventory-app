@@ -5,6 +5,7 @@
 /public/storage
 /storage/*.key
 /vendor/*
+!vendor/awcodes/
 !vendor/filament/
 !vendor/filament/**
 .env.backup
