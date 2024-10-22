@@ -22,7 +22,7 @@ class ExitItem extends Model
 
     public function exitInvoice()
     {
-        return $this->belongsTo(ExitInvoice::class);
+        return $this->belongsTo(ExitInvoice::class, 'invoice_id');
     }
 
     public function item()

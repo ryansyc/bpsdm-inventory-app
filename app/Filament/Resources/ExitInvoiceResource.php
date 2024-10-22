@@ -276,6 +276,14 @@ class ExitInvoiceResource extends Resource
                         return $data;
                     }),
 
+                Tables\Actions\Action::make('pdf')
+                    ->button()
+                    ->color('danger')
+                    ->label('PDF')
+                    ->icon('heroicon-s-document-arrow-down')
+                    ->url(fn($record) => route('pdf.generate', $record->id))
+                    ->openUrlInNewTab(),
+
                 Tables\Actions\EditAction::make()
                     ->button()
                     ->color('tertiary')
@@ -342,13 +350,6 @@ class ExitInvoiceResource extends Resource
     {
         $total = $get('unit_price') * $get('unit_quantity');
         $set('total_price',  $total);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
     }
 
     public static function getPages(): array

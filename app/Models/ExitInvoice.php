@@ -32,6 +32,6 @@ class ExitInvoice extends Model
 
     public function exitItems()
     {
-        return $this->hasMany(ExitItem::class);
+        return $this->hasMany(ExitItem::class, 'invoice_id');
     }
 }
