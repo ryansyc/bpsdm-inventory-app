@@ -16,9 +16,9 @@ return new class extends Migration
             $table->foreignId('invoice_id')->constrained('exit_invoices')->onDelete('cascade');
             $table->foreignId('item_id')->constrained('items')->onDelete('cascade');
             $table->string('unit');
-            $table->unsignedInteger('unit_price');
-            $table->unsignedInteger('unit_quantity');
-            $table->unsignedInteger('total_price');
+            $table->integer('unit_price');
+            $table->integer('unit_quantity');
+            $table->integer('total_price');
         });
     }
 

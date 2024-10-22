@@ -30,8 +30,8 @@ class ExitInvoice extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function exitItem()
+    public function exitItems()
     {
-        return $this->belongsTo(ExitItem::class);
+        return $this->hasMany(ExitItem::class);
     }
 }

@@ -12,7 +12,6 @@ class Item extends Model
     protected $fillable = [
         'code',
         'name',
-        // 'quantity',
         'unit',
         'unit_quantity',
         'unit_price',

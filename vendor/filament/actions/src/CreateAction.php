@@ -32,8 +32,8 @@ class CreateAction extends Action
 
         $this->modalHeading(fn(): string => __('filament-actions::create.single.modal.heading', ['label' => $this->getModelLabel()]));
 
-        // $this->modalSubmitActionLabel(__('filament-actions::create.single.modal.actions.create.label'));
-        $this->modalSubmitActionLabel('Simpan');
+        $this->modalSubmitActionLabel(__('filament-actions::create.single.modal.actions.create.label'));
+        // $this->modalSubmitActionLabel('Simpan');
 
         // $this->extraModalFooterActions(function (): array {
         //     return $this->canCreateAnother() ? [

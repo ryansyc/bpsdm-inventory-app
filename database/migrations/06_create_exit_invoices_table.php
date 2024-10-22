@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('department_id')->constrained('departments')->onDelete('cascade');
             $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->dateTime('date');
-            $table->unsignedInteger('total');
+            $table->integer('total');
             $table->string('provider');
             $table->string('receiver');
         });

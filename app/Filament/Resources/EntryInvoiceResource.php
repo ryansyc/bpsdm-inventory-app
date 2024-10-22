@@ -3,29 +3,25 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\EntryInvoiceResource\Pages;
-use App\Filament\Resources\EntryInvoiceResource\RelationManagers;
 use App\Models\Category;
-use App\Models\Item;
 use App\Models\EntryInvoice;
+use App\Models\EntryItem;
+use App\Models\Item;
+use Awcodes\TableRepeater\Components\TableRepeater;
+use Awcodes\TableRepeater\Header;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Forms\Set;
-use Filament\Forms\Get;
-use Filament\Tables\Grouping\Group;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\Filter;
-use Filament\Forms\Components\DatePicker;
-use Awcodes\TableRepeater\Components\TableRepeater;
-use Awcodes\TableRepeater\Header;
-use App\Models\Department;
-use App\Models\EntryItem;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Repeater;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
+
 
 class EntryInvoiceResource extends Resource
 {
@@ -50,22 +46,11 @@ class EntryInvoiceResource extends Resource
                     ->searchable()
                     ->required(),
 
-                Forms\Components\TextInput::make('total')
-                    ->label('Total Harga')
-                    ->formatStateUsing(fn($state) => 'Rp ' . number_format($state, 0, ',', '.'))
-                    ->hiddenOn('create'),
-
                 TableRepeater::make('entryItems')
                     ->label('Barang')
                     ->columnSpanFull()
                     ->required()
                     ->live()
-                    // ->afterStateUpdated(function (Get $get, Set $set) {
-                    //     self::updateTotals($get, $set);
-                    // })
-                    // ->deleteAction(
-                    //     fn(Action $action) => $action->after(fn(Get $get, Set $set) => self::updateTotals($get, $set)),
-                    // )
                     ->headers([
                         Header::make('Kode')->width('20%'),
                         Header::make('Nama')->width('20%'),
@@ -78,20 +63,28 @@ class EntryInvoiceResource extends Resource
                         Forms\Components\TextInput::make('code')
                             ->label('Kode')
                             ->required()
-                            ->live(onBlur: true)
+                            ->live(debounce: 500)
                             ->afterStateUpdated(function (Get $get, Set $set, $state) {
                                 $item = Item::where('code', $state)->first(['name', 'unit', 'unit_price']);
                                 if ($item) {
                                     $set('name', $item->name);
                                     $set('unit', $item->unit);
                                     $set('unit_price', $item->unit_price);
+                                    $set('is_disabled', true);
                                     self::calculateTotal($get, $set);
+                                } else {
+                                    $set('name', null);
+                                    $set('unit', null);
+                                    $set('unit_price', null);
+                                    $set('is_disabled', false);
                                 }
                             }),
                         Forms\Components\TextInput::make('name')
                             ->label('Nama')
                             ->required()
                             ->live(onBlur: true)
+                            ->dehydrated()
+                            ->disabled(fn(Get $get) => $get('is_disabled'))
                             ->afterStateUpdated(function (Get $get, Set $set, $state) {
                                 $item = Item::where('name', $state)->first(['code', 'unit', 'unit_price']);
                                 if ($item) {
@@ -99,17 +92,23 @@ class EntryInvoiceResource extends Resource
                                     $set('unit', $item->unit);
                                     $set('unit_price', $item->unit_price);
                                     self::calculateTotal($get, $set);
+                                } else {
+                                    $set('is_disabled', false);
                                 }
                             }),
                         Forms\Components\TextInput::make('unit')
                             ->label('Satuan')
-                            ->required(),
+                            ->required()
+                            ->dehydrated()
+                            ->disabled(fn(Get $get) => $get('is_disabled')),
                         Forms\Components\TextInput::make('unit_price')
                             ->label('Harga Satuan')
                             ->required()
                             ->minValue(0)
                             ->numeric()
                             ->live(onBlur: true)
+                            ->dehydrated()
+                            ->disabled(fn(Get $get) => $get('is_disabled'))
                             ->afterStateUpdated(function (Get $get, Set $set) {
                                 self::calculateTotal($get, $set);
                             }),
@@ -124,11 +123,16 @@ class EntryInvoiceResource extends Resource
                             }),
                         Forms\Components\TextInput::make('total_price')
                             ->label('Total')
-                            ->formatStateUsing(fn($state) => 'Rp ' . number_format($state, 0, ',', '.'))
-                            ->readOnly()
+                            ->disabled()
+                            ->dehydrated()
                     ]),
-
-
+                Forms\Components\FileUpload::make('file')
+                    ->columnSpanFull()
+                    ->directory('uploads/pdf_dokumen')
+                    ->required()
+                    ->getUploadedFileNameForStorageUsing(
+                        fn($file): string => now()->format('ymdHis') . '-' . $file->getClientOriginalName()
+                    ),
             ]);
     }
 
@@ -157,19 +161,16 @@ class EntryInvoiceResource extends Resource
                     ->label('Kategori')
                     ->searchable()
                     ->sortable()
-                    ->wrap()
+                    ->wrap(),
+                Tables\Columns\TextColumn::make('file')
+                    ->color('info')
+                    ->formatStateUsing(fn($state) => Str::limit(basename($state), 30))
+                    ->url(fn($record) => config('app.url') . "/storage/{$record->file}")
+                    ->openUrlInNewTab()
+                    ->searchable()
+                    ->sortable(),
             ])
-
-            ->groups(
-                [
-                    Group::make('category.name')
-                        ->label('Kategori')
-                        ->titlePrefixedWithLabel(false),
-                ]
-            )
-
             ->filters([
-
                 Filter::make('date')
                     ->form([
                         DatePicker::make('dari'),
@@ -187,24 +188,26 @@ class EntryInvoiceResource extends Resource
                             );
                     }),
 
-                // Filter::make('category')
-                //     ->form([
-                //         Forms\Components\Select::make('category')
-                //             ->label('Kategori')
-                //             ->options(Category::pluck('name', 'id'))
-                //             ->placeholder('-')
-                //             ->required(),
-                //     ])
-                //     ->query(function (Builder $query, array $data): Builder {
-                //         return $query
-                //             ->when(
-                //                 $data['category'],
-                //                 fn(Builder $query, $category): Builder => $query->where('category_id', $category),
-                //             );
-                //     }),
+                Filter::make('category')
+                    ->form([
+                        Select::make('category')
+                            ->label('Kategori')
+                            ->relationship('category', 'name')
+                            ->preload(),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['category'],
+                                fn(Builder $query, $category): Builder => $query->where('category_id', $category),
+                            );
+                    }),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
+                    ->button()
+                    ->color('secondary')
+                    ->modalHeading('Detail Barang Masuk')
                     ->mutateRecordDataUsing(function (array $data): array {
                         $entryItems = EntryItem::where('invoice_id', $data['id'])
                             ->select('item_id', 'unit', 'unit_price', 'unit_quantity', 'total_price')
@@ -220,28 +223,73 @@ class EntryInvoiceResource extends Resource
 
                         return $data;
                     }),
+                Tables\Actions\EditAction::make()
+                    ->button()
+                    ->color('tertiary')
+                    ->modalHeading('Ubah Barang Masuk')
+                    ->mutateRecordDataUsing(function (array $data): array {
+                        $entryItems = EntryItem::where('invoice_id', $data['id'])
+                            ->select('item_id', 'unit', 'unit_price', 'unit_quantity', 'total_price')
+                            ->with('item:id,code,name,unit_price')
+                            ->get()
+                            ->map(fn($entryItem) => [
+                                'name' => $entryItem->item->name,
+                                'code' => $entryItem->item->code,
+                                ...$entryItem->toArray(),
+                            ]);
+
+                        $data['entryItems'] = $entryItems->toArray();
+
+                        foreach ($data['entryItems'] as $entryItem) {
+                            $item = Item::where('name', $entryItem['name'])->first();
+                            $item->unit_quantity -= $entryItem['unit_quantity'];
+                            $item->total_price -= $entryItem['total_price'];
+                            $item->save();
+                            if ($item->unit_quantity <= 0) {
+                                $item->delete();
+                            }
+                        }
+
+                        return $data;
+                    })
+                    ->action(function ($record, array $data) {
+                        EntryItem::where('invoice_id', $record->id)->delete();
+                        $invoice = EntryInvoice::find($record->id);
+                        $data['total'] = 0;
+
+                        foreach ($data['entryItems'] as $entryItem) {
+                            $item = Item::where('name', $entryItem['name'])->first();
+                            $data['total'] += $entryItem['total_price'];
+
+                            if ($item) {
+                                $item->unit_quantity += $entryItem['unit_quantity'];
+                                $item->total_price += $entryItem['total_price'];
+                                $item->save();
+                            } else {
+                                $item = Item::create($entryItem);
+                            }
+
+                            EntryItem::create([
+                                'invoice_id' => $invoice->id,
+                                'item_id' => $item->id,
+                                'unit' => $entryItem['unit'],
+                                'unit_price' => $entryItem['unit_price'],
+                                'unit_quantity' => $entryItem['unit_quantity'],
+                                'total_price' => $entryItem['total_price'],
+                            ]);
+                        };
+
+                        return $invoice->update($data);
+                    }),
             ])
 
-            ->bulkActions([
-                // Tables\Actions\BulkActionGroup::make([
-                //     Tables\Actions\DeleteBulkAction::make(),
-                // ]),
-            ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
+            ->bulkActions([]);
     }
 
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListEntryInvoices::route('/'),
-            // 'create' => Pages\CreateEntryInvoice::route('/create'),
-            // 'edit' => Pages\EditEntryInvoice::route('/{record}/edit'),
         ];
     }
 
@@ -249,18 +297,5 @@ class EntryInvoiceResource extends Resource
     {
         $total = $get('unit_price') * $get('unit_quantity');
         $set('total_price',  $total);
-        // $set('total_price',  'Rp ' . number_format($total, 0, ',', '.'));
     }
-
-    // public static function updateTotals(Get $get, Set $set): void
-    // {
-    //     $selectedItems = collect($get('entryItems'));
-
-    //     $total = 0;
-    //     foreach ($selectedItems as $item) {
-    //         $total += $item['unit_price'] * $item['unit_quantity'] ?? 0;
-    //     }
-
-    //     $set('total', number_format($total));
-    // }
 }

@@ -23,6 +23,7 @@ use App\Models\ExitInvoice;
 use App\Models\ExitItem;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Get;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Support\Facades\Log;
@@ -50,7 +51,7 @@ class ExitInvoiceResource extends Resource
 
                 Forms\Components\Select::make('department_id')
                     ->label('Bidang')
-                    ->options(Department::pluck('name', 'id'))
+                    ->options(Department::where('id', '!=', Auth::user()->department_id)->pluck('name', 'id'))
                     ->searchable()
                     ->required()
                     ->live()
@@ -82,12 +83,6 @@ class ExitInvoiceResource extends Resource
                     ->columnSpanFull()
                     ->required()
                     ->live()
-                    // ->afterStateUpdated(function (Get $get, Set $set) {
-                    //     self::updateTotals($get, $set);
-                    // })
-                    // ->deleteAction(
-                    //     fn(Action $action) => $action->after(fn(Get $get, Set $set) => self::updateTotals($get, $set)),
-                    // )
                     ->headers([
                         Header::make('Kode')->width('20%'),
                         Header::make('Nama')->width('20%'),
@@ -100,21 +95,31 @@ class ExitInvoiceResource extends Resource
                         Forms\Components\TextInput::make('code')
                             ->label('Kode')
                             ->required()
-                            ->live(onBlur: true)
+                            ->live(debounce: 500)
                             ->afterStateUpdated(function (Get $get, Set $set, $state) {
                                 $item = Item::where('code', $state)->first(['name', 'unit', 'unit_price']);
                                 if ($item) {
                                     $set('name', $item->name);
                                     $set('unit', $item->unit);
                                     $set('unit_price', $item->unit_price);
+                                    $set('is_disabled', true);
                                     self::calculateTotal($get, $set);
+                                } else {
+                                    $set('name', null);
+                                    $set('unit', null);
+                                    $set('unit_price', null);
+                                    $set('is_disabled', false);
                                 }
                             }),
                         Forms\Components\Select::make('name')
                             ->label('Nama')
                             ->required()
-                            ->options(Item::pluck('name', 'name'))
+                            ->placeholder("")
+                            ->searchable()
                             ->live(onBlur: true)
+                            ->options(Item::pluck('name', 'name'))
+                            ->disabled(fn(Get $get) => $get('is_disabled'))
+                            ->dehydrated()
                             ->afterStateUpdated(function (Get $get, Set $set, $state) {
                                 $item = Item::where('name', $state)->first(['code', 'unit', 'unit_price']);
                                 if ($item) {
@@ -122,17 +127,23 @@ class ExitInvoiceResource extends Resource
                                     $set('unit', $item->unit);
                                     $set('unit_price', $item->unit_price);
                                     self::calculateTotal($get, $set);
+                                } else {
+                                    $set('is_disabled', false);
                                 }
                             }),
                         Forms\Components\TextInput::make('unit')
                             ->label('Satuan')
-                            ->required(),
+                            ->required()
+                            ->dehydrated()
+                            ->disabled(fn(Get $get) => $get('is_disabled')),
                         Forms\Components\TextInput::make('unit_price')
                             ->label('Harga Satuan')
                             ->required()
                             ->minValue(0)
                             ->numeric()
-                            ->live()
+                            ->live(onBlur: true)
+                            ->dehydrated()
+                            ->disabled(fn(Get $get) => $get('is_disabled'))
                             ->afterStateUpdated(function (Get $get, Set $set) {
                                 self::calculateTotal($get, $set);
                             }),
@@ -141,17 +152,15 @@ class ExitInvoiceResource extends Resource
                             ->required()
                             ->minValue(0)
                             ->numeric()
-                            ->live()
+                            ->live(onBlur: true)
                             ->afterStateUpdated(function (Get $get, Set $set) {
                                 self::calculateTotal($get, $set);
                             }),
                         Forms\Components\TextInput::make('total_price')
                             ->label('Total')
-                            ->formatStateUsing(fn($state) => 'Rp ' . number_format($state, 0, ',', '.'))
-                            ->readOnly()
+                            ->disabled()
+                            ->dehydrated()
                     ]),
-
-
             ]);
     }
     public static function table(Table $table): Table
@@ -216,6 +225,20 @@ class ExitInvoiceResource extends Resource
                             );
                     }),
 
+                Filter::make('category')
+                    ->form([
+                        Select::make('category')
+                            ->label('Kategori')
+                            ->relationship('category', 'name')
+                            ->preload(),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['category'],
+                                fn(Builder $query, $category): Builder => $query->where('category_id', $category),
+                            );
+                    }),
 
                 Filter::make('department')
                     ->form([
@@ -235,7 +258,7 @@ class ExitInvoiceResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make()
                     ->button()
-                    ->color('primary')
+                    ->color('secondary')
                     ->modalHeading('Detail Barang Keluar')
                     ->mutateRecordDataUsing(function (array $data): array {
                         $exitItems = ExitItem::where('invoice_id', $data['id'])
@@ -252,29 +275,68 @@ class ExitInvoiceResource extends Resource
 
                         return $data;
                     }),
-            ])
-            ->bulkActions([
-                // Tables\Actions\BulkActionGroup::make([
-                //     Tables\Actions\DeleteBulkAction::make(),
-                // ]),
-            ]);
-    }
 
-    // public static function getPluralModelLabel(): string
-    // {
-    //     Log::info('Get plural model label');
-    //     $department_id = request()->query('id');
-    //     if ($department_id) {
-    //         Log::info('department_id', [$department_id]);
-    //         $department = $department_id ? Department::find($department_id) : null;
-    //         Log::info('department', [$department]);
-    //         if ($department_id != Auth::user()->department_id) {
-    //             Log::info('Showing for department', [$department_id]);
-    //             return $department ? "Barang Keluar {$department->name}" : "Barang Keluar";
-    //         }
-    //         Log::info('Showing for current department', [Auth::user()->department_id]);
-    //     }
-    // }
+                Tables\Actions\EditAction::make()
+                    ->button()
+                    ->color('tertiary')
+                    ->modalHeading('Ubah Barang Keluar')
+                    ->mutateRecordDataUsing(function (array $data): array {
+                        $exitItems = ExitItem::where('invoice_id', $data['id'])
+                            ->select('item_id', 'unit', 'unit_price', 'unit_quantity', 'total_price')
+                            ->with('item:id,code,name,unit_price')
+                            ->get()
+                            ->map(fn($exitItem) => [
+                                'name' => $exitItem->item->name,
+                                'code' => $exitItem->item->code,
+                                ...$exitItem->toArray(),
+                            ]);
+
+                        $data['exitItems'] = $exitItems->toArray();
+
+                        foreach ($data['exitItems'] as $exitItem) {
+                            $item = Item::where('name', $exitItem['name'])->first();
+                            $item->unit_quantity += $exitItem['unit_quantity'];
+                            $item->total_price += $exitItem['total_price'];
+                            $item->save();
+                            if ($item->unit_quantity <= 0) {
+                                $item->delete();
+                            }
+                        }
+
+                        return $data;
+                    })
+                    ->action(function ($record, array $data) {
+                        ExitItem::where('invoice_id', $record->id)->delete();
+                        $invoice = ExitInvoice::find($record->id);
+                        $data['total'] = 0;
+
+                        foreach ($data['exitItems'] as $exitItem) {
+                            $item = Item::where('name', $exitItem['name'])->first();
+                            $data['total'] += $exitItem['total_price'];
+
+                            if ($item) {
+                                $item->unit_quantity -= $exitItem['unit_quantity'];
+                                $item->total_price -= $exitItem['total_price'];
+                                $item->save();
+                            } else {
+                                $item = Item::create($exitItem);
+                            }
+
+                            ExitItem::create([
+                                'invoice_id' => $invoice->id,
+                                'item_id' => $item->id,
+                                'unit' => $exitItem['unit'],
+                                'unit_price' => $exitItem['unit_price'],
+                                'unit_quantity' => $exitItem['unit_quantity'],
+                                'total_price' => $exitItem['total_price'],
+                            ]);
+                        };
+
+                        return $invoice->update($data);
+                    }),
+            ])
+            ->bulkActions([]);
+    }
 
     public static function calculateTotal(Get $get, Set $set): void
     {
@@ -293,8 +355,6 @@ class ExitInvoiceResource extends Resource
     {
         return [
             'index' => Pages\ListExitInvoices::route('/'),
-            // 'create' => Pages\CreateItemExit::route('/create'),
-            // 'edit' => Pages\EditItemExit::route('/{record}/edit'),
         ];
     }
 }

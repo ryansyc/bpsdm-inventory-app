@@ -15,11 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('code');
             $table->string('name');
-            // $table->unsignedInteger('quantity');
             $table->string('unit');
-            $table->unsignedInteger('unit_quantity');
-            $table->unsignedInteger('unit_price');
-            $table->unsignedInteger('total_price');
+            $table->integer('unit_quantity');
+            $table->integer('unit_price');
+            $table->integer('total_price');
         });
     }
 

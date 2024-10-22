@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Observers\FileObserver;
 
 class EntryInvoice extends Model
 {
@@ -12,7 +13,8 @@ class EntryInvoice extends Model
     protected $fillable = [
         'category_id',
         'date',
-        'total'
+        'total',
+        'file',
     ];
 
     public $timestamps = false;
@@ -25,5 +27,10 @@ class EntryInvoice extends Model
     public function entryItems()
     {
         return $this->hasMany(EntryItem::class);
+    }
+
+    protected static function booted()
+    {
+        self::observe(FileObserver::class);
     }
 }

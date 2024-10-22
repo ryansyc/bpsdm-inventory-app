@@ -73,7 +73,8 @@ class ItemResource extends Resource
                     ->required()
                     ->numeric()
                     ->minValue(0)
-                    ->readOnly(),
+                    ->dehydrated()
+                    ->disabled(),
             ]);
     }
     public static function table(Table $table): Table
@@ -136,23 +137,24 @@ class ItemResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->color('warning')
+                    ->color('tertiary')
                     ->button()
                     ->modalHeading('Ubah Barang')
                     ->modalWidth('md'),
 
-                // Tables\Actions\DeleteAction::make()
-                //     ->action(function ($record) {
-                //         if ($record->quantity > 0) {
-                //             Notification::make()
-                //                 ->title("Stok {$record->name} masih ada")
-                //                 ->body("Hanya bisa menghapus saat stok kosong")
-                //                 ->danger()
-                //                 ->send();
-                //             return;
-                //         }
-                //         $record->delete();
-                //     }),
+                Tables\Actions\DeleteAction::make()
+                    ->button()
+                    ->action(function ($record) {
+                        if ($record->quantity > 0) {
+                            Notification::make()
+                                ->title("Stok {$record->name} masih ada")
+                                ->body("Hanya bisa menghapus saat stok kosong")
+                                ->danger()
+                                ->send();
+                            return;
+                        }
+                        $record->delete();
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

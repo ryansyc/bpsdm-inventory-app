@@ -36,11 +36,9 @@ class AdminPanelProvider extends PanelProvider
             ->sidebarWidth('300px')
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->colors([
-                // 'primary' => Color::hex('#006799'),
                 'primary' => Color::hex('#027D3D'),
-                'secondary' => Color::hex('#00AFEF'),
-                // 'primary' => Color::hex('#FCC134'),
-
+                'secondary' => Color::hex('#00A8E6'),
+                'tertiary' => Color::hex('#E6AF30'),
             ])
             ->login(Login::class)
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')

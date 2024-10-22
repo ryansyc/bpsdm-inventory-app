@@ -29,11 +29,9 @@ class ListExitInvoices extends ListRecords
                 ->modalHeading('Tambah Barang Keluar')
 
                 ->before(function (array $data) {
-                    foreach ($data['exitItems'] as $exitItemData) {
-                        // Get the item by code
-                        $exitItem = Item::where('code', $exitItemData['code'])->first();
+                    foreach ($data['exitItems'] as $exitItem) {
+                        $exitItem = Item::where('code', $exitItem['code'])->first();
 
-                        // If the item doesn't exist, notify the user
                         if (!$exitItem) {
                             Notification::make()
                                 ->title('Barang tidak ditemukan')
@@ -43,8 +41,7 @@ class ListExitInvoices extends ListRecords
                             $this->halt();
                         }
 
-                        // If the stock is not sufficient, notify the user
-                        if ($exitItem->unit_quantity < $exitItemData['unit_quantity']) {
+                        if ($exitItem->unit_quantity < $exitItem['unit_quantity']) {
                             Notification::make()
                                 ->title('Stok tidak mencukupi')
                                 ->danger()
@@ -56,14 +53,11 @@ class ListExitInvoices extends ListRecords
                 })
 
                 ->mutateFormDataUsing(function (array $data): array {
-                    // Set current date and calculate the total
                     $data['date'] = now();
                     $data['total'] = 0;
-
-                    foreach ($data['exitItems'] as $exitItemData) {
-                        $data['total'] += $exitItemData['total_price'];
+                    foreach ($data['exitItems'] as $exitItem) {
+                        $data['total'] += $exitItem['total_price'];
                     }
-
                     return $data;
                 })
 
@@ -72,22 +66,22 @@ class ListExitInvoices extends ListRecords
                     $invoice = ExitInvoice::create($data);
 
                     // Process each exit item
-                    foreach ($data['exitItems'] as $exitItemData) {
-                        $item = Item::where('code', $exitItemData['code'])->first();
+                    foreach ($data['exitItems'] as $exitItem) {
+                        $item = Item::where('code', $exitItem['code'])->first();
 
                         // Deduct the quantity from stock
-                        $item->unit_quantity -= $exitItemData['unit_quantity'];
-                        $item->total_price -= $exitItemData['total_price'];
+                        $item->unit_quantity -= $exitItem['unit_quantity'];
+                        $item->total_price -= $exitItem['total_price'];
                         $item->save();
 
                         // Create an exit item record
                         ExitItem::create([
                             'invoice_id' => $invoice->id,
                             'item_id' => $item->id,
-                            'unit' => $exitItemData['unit'],
-                            'unit_price' => $exitItemData['unit_price'],
-                            'unit_quantity' => $exitItemData['unit_quantity'],
-                            'total_price' => $exitItemData['total_price'],
+                            'unit' => $exitItem['unit'],
+                            'unit_price' => $exitItem['unit_price'],
+                            'unit_quantity' => $exitItem['unit_quantity'],
+                            'total_price' => $exitItem['total_price'],
                         ]);
                     }
 

@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->dateTime('date');
-            $table->unsignedInteger('total');
+            $table->integer('total');
+            $table->string('file');
         });
     }
 

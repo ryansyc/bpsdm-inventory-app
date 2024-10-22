@@ -37,7 +37,7 @@ class SubmissionResource extends Resource
                 Forms\Components\Select::make('department_id')
                     ->label('Bidang')
                     ->required()
-                    ->options(Department::pluck('name', 'id'))
+                    ->options(Department::where('id', '!=', Auth::user()->department_id)->pluck('name', 'id'))
                     ->searchable(),
                 Forms\Components\TextInput::make('name')
                     ->label('Nama Lengkap')
