@@ -11,8 +11,21 @@
         }
 
         body {
-            padding: .5in;
-            font-size: 8px;
+            padding: 3cm;
+            font-size: 11px;
+            font-family: "Arial", sans-serif;
+        }
+
+        .container {
+            display: table;
+            width: 100%;
+            height: 100%;
+        }
+
+        .content {
+            display: table-cell;
+            text-align: center;
+            vertical-align: middle;
         }
 
         .table {
@@ -21,93 +34,177 @@
 
         .table td,
         .table th {
-            border: 1px solid black;
-            padding: 8px;
-        }
-
-        .table th {
-            background-color: #f2f2f2;
+            /* border: 1px solid black; */
+            padding: 1px;
         }
 
         .emptyRow {
-            height: 0.5cm;
+            height: 1cm;
         }
     </style>
 </head>
 
 <body>
-    <div style="display: flex; justify-content: center; padding: 10px;">
-        <table class="table">
-            <tbody>
-                <tr>
-                    <td style="width: 3cm">DAERAH/UNIT</td>
-                    <td style="width: 0.5cm; text-align: center">:</td>
-                    <td style="width: 3cm">Gudang</td>
-                    <td style="width: 4cm"></td>
-                    <td style="width: 0.5cm; text-align: center"></td>
-                    <td style="width: 3cm"></td>
-                    <td style="width: 3cm">Model</td>
-                    <td style="width: 0.5cm; text-align: center">:</td>
-                    <td style="width: 3cm"></td>
-                </tr>
-                <tr>
-                    <td colspan="6"></td>
-                    <td class="w-40">No</td>
-                    <td style="width: 0.5cm" style="text-align: center">:</td>
-                    <td class="w-40"></td>
-                </tr>
+    <div class="container">
+        <div class="content">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td style="width: 3cm">DAERAH/UNIT</td>
+                        <td style="width: 0.5cm; text-align: center">:</td>
+                        <td style="width: 3cm">Gudang</td>
+                        <td style="width: 4cm"></td>
+                        <td style="width: 0.5cm; text-align: center"></td>
+                        <td style="width: 3cm"></td>
+                        <td style="width: 3.5cm">Model</td>
+                        <td style="width: 0.5cm; text-align: center">:</td>
+                        <td style="width: 3cm"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="6"></td>
+                        <td class="w-40">No</td>
+                        <td style="width: 0.5cm; text-align: center">:</td>
+                        <td class="w-40"></td>
+                    </tr>
 
-                <tr class="emptyRow"></tr>
+                    <tr class="emptyRow">
+                        <td colspan="9">&nbsp;</td>
+                    </tr>
 
-                <tr>
-                    <td colspan="9">PEMERINTAH DAERAH PROVINSI JAWA BARAT</td>
-                </tr>
-                <tr>
-                    <td colspan="9">GUDANG : BADAN PENGEMBANGAN SUMBER DAYA MANUSIA</td>
-                </tr>
-                <tr>
-                    <td colspan="9">BUKTI BARANG DARI DAERAH/UNIT : SUB BAGIAN TATA USAHA</td>
-                </tr>
-                <tr>
-                    <td colspan="9">KEPADA DAERAH/UNIT: KOORDINATOR WIDYAISWARA BPSDM JAWA BARAT</td>
-                </tr>
+                    <tr>
+                        <td colspan="9" style="text-align: center">PEMERINTAH DAERAH PROVINSI JAWA BARAT</td>
+                    </tr>
+                    <tr>
+                        <td colspan="9" style="text-align: center">GUDANG : BADAN PENGEMBANGAN SUMBER DAYA MANUSIA</td>
+                    </tr>
+                    <tr>
+                        <td colspan="9" style="text-align: center">BUKTI BARANG DARI DAERAH/UNIT : SUB BAGIAN TATA USAHA</td>
+                    </tr>
+                    <tr>
+                        <td colspan="9" style="text-align: center">KEPADA DAERAH/UNIT: KOORDINATOR WIDYAISWARA BPSDM JAWA BARAT</td>
+                    </tr>
 
-                <tr class="emptyRow"></tr>
+                    <tr class="emptyRow">
+                        <td colspan="9">&nbsp;</td>
+                    </tr>
 
-                <tr>
-                    <td>Tanggal Penyerahan Barang Menurut Permintaan</td>
-                    <td colspan="2">Barang Diterima Dari Gudang</td>
-                    <td colspan="2">Nama dan Kode Barang</td>
-                    <td>Satuan</td>
-                    <td>Jumlah Barang</td>
-                    <td colspan="2">Jumlah Harga</td>
-                </tr>
+                    <tr>
+                        <td style="text-align: center; border: 1px solid black">Tanggal Penyerahan Barang Menurut Permintaan</td>
+                        <td colspan="2" style="text-align: center; border: 1px solid black">Barang Diterima Dari Gudang</td>
+                        <td colspan="2" style="text-align: center; border: 1px solid black">Nama dan Kode Barang</td>
+                        <td style="text-align: center; border: 1px solid black">Satuan</td>
+                        <td style="text-align: center; border: 1px solid black">Jumlah Barang</td>
+                        <td colspan="2" style="text-align: center; border: 1px solid black">Jumlah Harga</td>
+                    </tr>
 
-                @foreach ($exitInvoice->exitItems as $item)
-                <tr>
-                    <td>{{ \Carbon\Carbon::parse($exitInvoice->date)->translatedFormat('d F Y') }}</td>
-                    <td colspan="2">BPSDM</td>
-                    <td colspan="2">{{$item->item->name}}</td>
-                    <td>{{$item->item->unit}}</td>
-                    <td>{{$item->unit_quantity}}</td>
-                    <td colspan="2">{{$item->total_price}}</td>
-                </tr>
-                @endforeach
+                    @foreach ($exitInvoice->exitItems as $item)
+                    <tr>
+                        <td style="text-align: center; border: 1px solid black">{{ \Carbon\Carbon::parse($exitInvoice->date)->translatedFormat('d F Y') }}</td>
+                        <td colspan="2" style="text-align: center; border: 1px solid black">BPSDM</td>
+                        <td colspan="2" style="border: 1px solid black">{{$item->item->name}}</td>
+                        <td style="text-align: center; border: 1px solid black">{{$item->item->unit}}</td>
+                        <td style="text-align: center; border: 1px solid black">{{$item->unit_quantity}}</td>
+                        <td colspan="2" style="text-align: center; border: 1px solid black">Rp {{ number_format($item->total_price, 0, ',', '.') }}</td>
+                    </tr>
+                    @endforeach
 
-                <tr class="emptyRow"></tr>
+                    <tr class="emptyRow">
+                        <td colspan="9">&nbsp;</td>
+                    </tr>
 
-                <tr>
-                    <td>Daerah/Unit Umum</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td style="text-align: right">Dibuat di Cimahi, {{ \Carbon\Carbon::parse($exitInvoice->date)->translatedFormat('d F Y') }}</td>
-                    <td></td>
-                    <td></td>
-            </tbody>
-        </table>
+                    <tr>
+                        <td>Daerah/Unit Umum</td>
+                        <td colspan="5"></td>
+                        <td colspan="3">Dibuat di Cimahi, {{ \Carbon\Carbon::parse($exitInvoice->date)->translatedFormat('d F Y') }}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Cimahi, {{ \Carbon\Carbon::parse($exitInvoice->date)->translatedFormat('d F Y') }}</td>
+                        <td colspan="8"></td>
+                    </tr>
+
+                    <tr class="emptyRow">
+                        <td colspan="9">&nbsp;</td>
+                    </tr>
+
+                    <tr>
+                        <td>Yang Menerima</td>
+                        <td colspan="5"></td>
+                        <td colspan="3">Penyusun Kebutuhan Barang Inventaris</td>
+                    </tr>
+
+                    <tr>
+                        <td>Tanda Tangan</td>
+                        <td style="text-align: center">:</td>
+                        <td colspan="4"></td>
+                        <td>Tanda Tangan</td>
+                        <td style="text-align: center">:</td>
+                        <td></td>
+                    </tr>
+
+                    <tr>
+                        <td>Nama</td>
+                        <td style="text-align: center">:</td>
+                        <td>{{ strtoupper($exitInvoice->receiver) }}</td>
+
+                        <td colspan="3"></td>
+                        <td>Nama</td>
+                        <td style="text-align: center">:</td>
+                        <td>{{ strtoupper($exitInvoice->provider) }}</td>
+                    </tr>
+
+                    <tr>
+                        <td>NIP</td>
+                        <td style="text-align: center">:</td>
+                        <td colspan="4"></td>
+                        <td>NIP</td>
+                        <td style="text-align: center">:</td>
+                        <td></td>
+                    </tr>
+
+                    <tr>
+                        <td>Pangkat/Gol</td>
+                        <td style="text-align: center">:</td>
+                        <td colspan="4"></td>
+                        <td>Pangkat/Gol</td>
+                        <td style="text-align: center">:</td>
+                        <td></td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="3"></td>
+                        <td colspan="3">MENGETAHUI : KEPALA SUB BAG TATA USAHA</td>
+                        <td colspan="3"></td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="3"></td>
+                        <td>Tanda Tangan</td>
+                        <td style="text-align: center">:</td>
+                        <td colspan="4"></td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="3"></td>
+                        <td>Nama</td>
+                        <td style="text-align: center">:</td>
+                        <td colspan="4">FIRMANSYAH, S.Sos., M.SI.</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"></td>
+                        <td>NIP</td>
+                        <td style="text-align: center">:</td>
+                        <td colspan="4">197507242010011007</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"></td>
+                        <td>Pangkat/Gol</td>
+                        <td style="text-align: center">:</td>
+                        <td colspan="4">Penata Tingkat I (III/d)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </body>
 

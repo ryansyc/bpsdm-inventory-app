@@ -15,18 +15,18 @@ class PDFController
         $exitInvoice = ExitInvoice::with('exitItems.item')->findOrFail($id);
 
         $html = View::make('pdf.exit-invoice', compact('exitInvoice'))->render();
-        return $html;
+        // return $html;
 
-        // $options = new Options();
-        // $options->set('defaultFont', 'Helvetica');
-        // $dompdf = new Dompdf($options);
+        $options = new Options();
+        $options->set('defaultFont', 'Helvetica');
+        $dompdf = new Dompdf($options);
 
-        // $dompdf->loadHtml($html);
-        // // $dompdf->setPaper('A4', 'landscape');
-        // $dompdf->render();
+        $dompdf->loadHtml($html);
+        // $dompdf->setPaper('A4', 'landscape');
+        $dompdf->render();
 
-        // $filename = now()->format('YmdHis') . '.pdf';
+        $filename = now()->format('YmdHis') . '.pdf';
 
-        // return $dompdf->stream($filename);
+        return $dompdf->stream($filename);
     }
 }
