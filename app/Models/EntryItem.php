@@ -20,13 +20,13 @@ class EntryItem extends Model
         'total_price',
     ];
 
-    public function entryInvoice()
+    public function invoice()
     {
-        return $this->belongsTo(EntryInvoice::class);
+        return $this->belongsTo(EntryInvoice::class, 'invoice_id');
     }
 
     public function item()
     {
-        return $this->belongsTo(Item::class);
+        return $this->belongsTo(Item::class, 'item_id');
     }
 }

@@ -21,12 +21,12 @@ class EntryInvoice extends Model
 
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
-    public function entryItems()
+    public function items()
     {
-        return $this->hasMany(EntryItem::class);
+        return $this->hasMany(EntryItem::class, 'invoice_id');
     }
 
     protected static function booted()

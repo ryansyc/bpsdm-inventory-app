@@ -21,12 +21,12 @@ class Item extends Model
 
     public function entryItems()
     {
-        return $this->hasMany(EntryItem::class);
+        return $this->hasMany(EntryItem::class, 'item_id');
     }
 
     public function exitItems()
     {
-        return $this->hasMany(ExitItem::class);
+        return $this->hasMany(ExitItem::class, 'item_id');
     }
 
     public function calculateTotalPrice($quantity): int

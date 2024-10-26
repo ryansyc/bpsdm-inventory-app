@@ -8,7 +8,6 @@ use App\Models\ExitItem;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
 use App\Models\Item;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
@@ -87,23 +86,6 @@ class ListExitInvoices extends ListRecords
 
                     return $invoice;
                 }),
-
-            ExportAction::make()
-                ->label('Export')
-                ->exports([
-                    ExcelExport::make('table')
-                        ->withFilename(date('Y-m-d') . ' - Barang Keluar')
-                        ->withColumns([
-                            Column::make('exit_date')
-                                ->heading('Tanggal Keluar'),
-                            Column::make('item.name')
-                                ->heading('Nama Barang'),
-                            Column::make('quantity')
-                                ->heading('Jumlah'),
-                            Column::make('description')
-                                ->heading('Deskripsi'),
-                        ])
-                ]),
         ];
     }
 }

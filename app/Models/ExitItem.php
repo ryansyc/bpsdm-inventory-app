@@ -20,13 +20,13 @@ class ExitItem extends Model
         'total_price',
     ];
 
-    public function exitInvoice()
+    public function invoice()
     {
         return $this->belongsTo(ExitInvoice::class, 'invoice_id');
     }
 
     public function item()
     {
-        return $this->belongsTo(Item::class);
+        return $this->belongsTo(Item::class, 'item_id');
     }
 }

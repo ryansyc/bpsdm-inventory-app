@@ -22,15 +22,15 @@ class ExitInvoice extends Model
 
     public function department()
     {
-        return $this->belongsTo(Department::class);
+        return $this->belongsTo(Department::class, 'department_id');
     }
 
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
-    public function exitItems()
+    public function items()
     {
         return $this->hasMany(ExitItem::class, 'invoice_id');
     }

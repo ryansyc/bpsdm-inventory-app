@@ -278,10 +278,10 @@ class ExitInvoiceResource extends Resource
 
                 Tables\Actions\Action::make('pdf')
                     ->button()
-                    ->color('danger')
-                    ->label('PDF')
+                    ->color('primary')
+                    ->label('Export')
                     ->icon('heroicon-s-document-arrow-down')
-                    ->url(fn($record) => route('pdf.generate', $record->id))
+                    ->url(fn($record) => route('invoice', $record->id))
                     ->openUrlInNewTab(),
 
                 Tables\Actions\EditAction::make()

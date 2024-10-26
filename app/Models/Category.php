@@ -16,13 +16,13 @@ class Category extends Model
     public $timestamps = false;
 
 
-    public function itemEntries()
+    public function entryInvoices()
     {
-        return $this->hasMany(ItemEntry::class, 'category_id');
+        return $this->hasMany(EntryInvoice::class, 'category_id');
     }
 
-    public function itemExits()
+    public function exitInvoices()
     {
-        return $this->hasMany(ItemExit::class, 'category_id');
+        return $this->hasMany(ExitInvoice::class, 'category_id');
     }
 }

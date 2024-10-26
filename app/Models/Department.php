@@ -12,18 +12,18 @@ class Department extends Model
     public $timestamps = false;
 
 
-    public function itemExits()
+    public function exitInvoices()
     {
-        return $this->hasMany(ItemExit::class);
+        return $this->hasMany(ExitInvoice::class, 'department_id');
     }
 
     public function submissions()
     {
-        return $this->hasMany(Submission::class);
+        return $this->hasMany(Submission::class, 'department_id');
     }
 
     public function users()
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(User::class, 'department_id');
     }
 }
