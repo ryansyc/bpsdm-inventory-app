@@ -94,9 +94,6 @@ class Table extends ViewComponent
                 'model' => $table->getModelLabel(),
             ]);
         });
-
-        $this->recordUrl(null);
-        $this->recordAction(null);
     }
 
     /**

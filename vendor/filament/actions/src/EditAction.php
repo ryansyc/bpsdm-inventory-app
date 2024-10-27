@@ -25,7 +25,7 @@ class EditAction extends Action
 
         $this->label(__('filament-actions::edit.single.label'));
 
-        $this->modalHeading(fn(): string => __('filament-actions::edit.single.modal.heading', ['label' => $this->getRecordTitle()]));
+        $this->modalHeading(fn (): string => __('filament-actions::edit.single.modal.heading', ['label' => $this->getRecordTitle()]));
 
         $this->modalSubmitActionLabel(__('filament-actions::edit.single.modal.actions.save.label'));
 

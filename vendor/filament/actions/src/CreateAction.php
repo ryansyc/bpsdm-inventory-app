@@ -28,19 +28,18 @@ class CreateAction extends Action
     {
         parent::setUp();
 
-        $this->label(fn(): string => __('filament-actions::create.single.label', ['label' => $this->getModelLabel()]));
+        $this->label(fn (): string => __('filament-actions::create.single.label', ['label' => $this->getModelLabel()]));
 
-        $this->modalHeading(fn(): string => __('filament-actions::create.single.modal.heading', ['label' => $this->getModelLabel()]));
+        $this->modalHeading(fn (): string => __('filament-actions::create.single.modal.heading', ['label' => $this->getModelLabel()]));
 
         $this->modalSubmitActionLabel(__('filament-actions::create.single.modal.actions.create.label'));
-        // $this->modalSubmitActionLabel('Simpan');
 
-        // $this->extraModalFooterActions(function (): array {
-        //     return $this->canCreateAnother() ? [
-        //         $this->makeModalSubmitAction('createAnother', arguments: ['another' => true])
-        //             ->label(__('filament-actions::create.single.modal.actions.create_another.label')),
-        //     ] : [];
-        // });
+        $this->extraModalFooterActions(function (): array {
+            return $this->canCreateAnother() ? [
+                $this->makeModalSubmitAction('createAnother', arguments: ['another' => true])
+                    ->label(__('filament-actions::create.single.modal.actions.create_another.label')),
+            ] : [];
+        });
 
         $this->successNotificationTitle(__('filament-actions::create.single.notifications.created.title'));
 
@@ -92,8 +91,6 @@ class CreateAction extends Action
 
             $this->success();
         });
-        $this->icon('heroicon-o-plus')
-            ->label('Tambah');
     }
 
     public function relationship(?Closure $relationship): static
@@ -115,7 +112,7 @@ class CreateAction extends Action
      */
     public function disableCreateAnother(bool | Closure $condition = true): static
     {
-        $this->createAnother(fn(CreateAction $action): bool => ! $action->evaluate($condition));
+        $this->createAnother(fn (CreateAction $action): bool => ! $action->evaluate($condition));
 
         return $this;
     }

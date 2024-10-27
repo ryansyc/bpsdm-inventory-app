@@ -8,6 +8,7 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\Alignment;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
@@ -29,7 +30,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
     use Concerns\HasExtraItemActions;
     use HasReorderAnimationDuration;
 
-    protected string | Closure | null $addActionLabel = 'Tambah Barang';
+    protected string | Closure | null $addActionLabel = null;
 
     protected string | Closure | null $addBetweenActionLabel = null;
 
@@ -54,6 +55,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
     protected string | Closure | null $itemLabel = null;
 
     protected Field | Closure | null $simpleField = null;
+
+    protected Alignment | string | Closure | null $addActionAlignment = null;
 
     protected ?Closure $modifyRelationshipQueryUsing = null;
 
@@ -134,17 +137,17 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
         });
 
         $this->registerActions([
-            fn(Repeater $component): Action => $component->getAddAction(),
-            fn(Repeater $component): Action => $component->getAddBetweenAction(),
-            fn(Repeater $component): Action => $component->getCloneAction(),
-            fn(Repeater $component): Action => $component->getCollapseAction(),
-            fn(Repeater $component): Action => $component->getCollapseAllAction(),
-            fn(Repeater $component): Action => $component->getDeleteAction(),
-            fn(Repeater $component): Action => $component->getExpandAction(),
-            fn(Repeater $component): Action => $component->getExpandAllAction(),
-            fn(Repeater $component): Action => $component->getMoveDownAction(),
-            fn(Repeater $component): Action => $component->getMoveUpAction(),
-            fn(Repeater $component): Action => $component->getReorderAction(),
+            fn (Repeater $component): Action => $component->getAddAction(),
+            fn (Repeater $component): Action => $component->getAddBetweenAction(),
+            fn (Repeater $component): Action => $component->getCloneAction(),
+            fn (Repeater $component): Action => $component->getCollapseAction(),
+            fn (Repeater $component): Action => $component->getCollapseAllAction(),
+            fn (Repeater $component): Action => $component->getDeleteAction(),
+            fn (Repeater $component): Action => $component->getExpandAction(),
+            fn (Repeater $component): Action => $component->getExpandAllAction(),
+            fn (Repeater $component): Action => $component->getMoveDownAction(),
+            fn (Repeater $component): Action => $component->getMoveUpAction(),
+            fn (Repeater $component): Action => $component->getReorderAction(),
         ]);
 
         $this->mutateDehydratedStateUsing(static function (Repeater $component, ?array $state): array {
@@ -162,7 +165,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
     public function getAddAction(): Action
     {
         $action = Action::make($this->getAddActionName())
-            ->label(fn(Repeater $component) => $component->getAddActionLabel())
+            ->label(fn (Repeater $component) => $component->getAddActionLabel())
             ->color('gray')
             ->action(function (Repeater $component): void {
                 $newUuid = $component->generateUuid();
@@ -185,7 +188,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
             })
             ->button()
             ->size(ActionSize::Small)
-            ->visible(fn(Repeater $component): bool => $component->isAddable());
+            ->visible(fn (Repeater $component): bool => $component->isAddable());
 
         if ($this->modifyAddActionUsing) {
             $action = $this->evaluate($this->modifyAddActionUsing, [
@@ -194,6 +197,24 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
         }
 
         return $action;
+    }
+
+    public function addActionAlignment(Alignment | string | Closure | null $addActionAlignment): static
+    {
+        $this->addActionAlignment = $addActionAlignment;
+
+        return $this;
+    }
+
+    public function getAddActionAlignment(): Alignment | string | null
+    {
+        $alignment = $this->evaluate($this->addActionAlignment);
+
+        if (is_string($alignment)) {
+            $alignment = Alignment::tryFrom($alignment) ?? $alignment;
+        }
+
+        return $alignment;
     }
 
     public function addAction(?Closure $callback): static
@@ -211,7 +232,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
     public function getAddBetweenAction(): Action
     {
         $action = Action::make($this->getAddBetweenActionName())
-            ->label(fn(Repeater $component) => $component->getAddBetweenActionLabel())
+            ->label(fn (Repeater $component) => $component->getAddBetweenActionLabel())
             ->color('gray')
             ->action(function (array $arguments, Repeater $component): void {
                 $newKey = $component->generateUuid();
@@ -302,7 +323,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
             })
             ->iconButton()
             ->size(ActionSize::Small)
-            ->visible(fn(Repeater $component): bool => $component->isCloneable());
+            ->visible(fn (Repeater $component): bool => $component->isCloneable());
 
         if ($this->modifyCloneActionUsing) {
             $action = $this->evaluate($this->modifyCloneActionUsing, [
@@ -341,7 +362,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
             })
             ->iconButton()
             ->size(ActionSize::Small)
-            ->visible(fn(Repeater $component): bool => $component->isDeletable());
+            ->visible(fn (Repeater $component): bool => $component->isDeletable());
 
         if ($this->modifyDeleteActionUsing) {
             $action = $this->evaluate($this->modifyDeleteActionUsing, [
@@ -379,7 +400,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
             })
             ->iconButton()
             ->size(ActionSize::Small)
-            ->visible(fn(Repeater $component): bool => $component->isReorderable());
+            ->visible(fn (Repeater $component): bool => $component->isReorderable());
 
         if ($this->modifyMoveDownActionUsing) {
             $action = $this->evaluate($this->modifyMoveDownActionUsing, [
@@ -417,7 +438,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
             })
             ->iconButton()
             ->size(ActionSize::Small)
-            ->visible(fn(Repeater $component): bool => $component->isReorderable());
+            ->visible(fn (Repeater $component): bool => $component->isReorderable());
 
         if ($this->modifyMoveUpActionUsing) {
             $action = $this->evaluate($this->modifyMoveUpActionUsing, [
@@ -459,7 +480,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
             ->size(ActionSize::Small)
-            ->visible(fn(Repeater $component): bool => $component->isReorderableWithDragAndDrop());
+            ->visible(fn (Repeater $component): bool => $component->isReorderableWithDragAndDrop());
 
         if ($this->modifyReorderActionUsing) {
             $action = $this->evaluate($this->modifyReorderActionUsing, [
@@ -709,7 +730,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
      */
     public function disableItemCreation(bool | Closure $condition = true): static
     {
-        $this->addable(fn(Repeater $component): bool => ! $this->evaluate($condition));
+        $this->addable(fn (Repeater $component): bool => ! $this->evaluate($condition));
 
         return $this;
     }
@@ -719,7 +740,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
      */
     public function disableItemDeletion(bool | Closure $condition = true): static
     {
-        $this->deletable(fn(Repeater $component): bool => ! $this->evaluate($condition));
+        $this->deletable(fn (Repeater $component): bool => ! $this->evaluate($condition));
 
         return $this;
     }
@@ -729,7 +750,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
      */
     public function disableItemMovement(bool | Closure $condition = true): static
     {
-        $this->reorderable(fn(Repeater $component): bool => ! $this->evaluate($condition));
+        $this->reorderable(fn (Repeater $component): bool => ! $this->evaluate($condition));
 
         return $this;
     }
@@ -900,9 +921,11 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
             $relationship
                 ->whereKey($recordsToDelete)
                 ->get()
-                ->each(static fn(Model $record) => $record->delete());
+                ->each(static fn (Model $record) => $record->delete());
 
-            $childComponentContainers = $component->getChildComponentContainers();
+            $childComponentContainers = $component->getChildComponentContainers(
+                withHidden: $component->shouldSaveRelationshipsWhenHidden(),
+            );
 
             $itemOrder = 1;
             $orderColumn = $component->getOrderColumn();
@@ -1071,9 +1094,9 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
             (! $this->modifyRelationshipQueryUsing)
         ) {
             return $this->cachedExistingRecords = $this->getRecord()->getRelationValue($relationshipName)
-                ->when(filled($orderColumn), fn(Collection $records) => $records->sortBy($orderColumn))
+                ->when(filled($orderColumn), fn (Collection $records) => $records->sortBy($orderColumn))
                 ->mapWithKeys(
-                    fn(Model $item): array => ["record-{$item[$relatedKeyName]}" => $item],
+                    fn (Model $item): array => ["record-{$item[$relatedKeyName]}" => $item],
                 );
         }
 
@@ -1097,7 +1120,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
         }
 
         return $this->cachedExistingRecords = $relationshipQuery->get()->mapWithKeys(
-            fn(Model $item): array => ["record-{$item[$relatedKeyName]}" => $item],
+            fn (Model $item): array => ["record-{$item[$relatedKeyName]}" => $item],
         );
     }
 
