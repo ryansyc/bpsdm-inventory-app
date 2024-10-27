@@ -22,6 +22,9 @@ class ListEntryInvoices extends ListRecords
         return [
             Actions\CreateAction::make()
                 ->modalHeading('Tambah Barang Masuk')
+                ->icon('heroicon-o-plus')
+                ->label('Tambah')
+                ->createAnother(false)
 
                 ->mutateFormDataUsing(function (array $data): array {
                     $data['date'] = now();

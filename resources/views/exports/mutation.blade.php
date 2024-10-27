@@ -46,7 +46,7 @@
 
             <tr>
                 <td bgcolor="#ACD7E6" colspan="3" style="border: 1px solid black; font-family: Arial; font-size: 8px; font-weight: bold; text-align: center; vertical-align: middle">{{ strtoupper(now()->startOfMonth()->translatedFormat('j F Y')) }}</td>
-                <td bgcolor="#ACD7E6" colspan="3" style="border: 1px solid black; font-family: Arial; font-size: 8px; font-weight: bold; text-align: center; vertical-align: middle">{{ strtoupper(now()->endOfMonth()->translatedFormat('j F Y')) }}</td>
+                <td bgcolor="#ACD7E6" colspan="3" style="border: 1px solid black; font-family: Arial; font-size: 8px; font-weight: bold; text-align: center; vertical-align: middle">{{ strtoupper(now()->translatedFormat('j F Y')) }}</td>
             </tr>
 
             <tr>

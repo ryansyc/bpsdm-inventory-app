@@ -21,7 +21,7 @@ class SubmissionResource extends Resource
 {
     protected static ?string $model = Submission::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-s-inbox-arrow-down';
 
     protected static ?string $slug = 'ajuan-barang';
 

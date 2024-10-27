@@ -18,7 +18,10 @@ class ListSubmissions extends ListRecords
         return [
             Actions\CreateAction::make()
                 ->modalHeading('Tambah Pengajuan Barang')
+                ->icon('heroicon-o-plus')
+                ->label('Tambah')
                 ->modalWidth('md')
+                ->createAnother(false)
 
                 ->mutateFormDataUsing(function (array $data): array {
                     $data['date'] = now();

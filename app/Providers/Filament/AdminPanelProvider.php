@@ -21,7 +21,6 @@ use App\Models\Department;
 use App\Filament\Resources\ExitInvoiceResource;
 use Filament\Navigation\NavigationItem;
 use Illuminate\Support\Facades\Auth;
-use Filapanel\ClassicTheme\ClassicThemePlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -52,7 +51,6 @@ class AdminPanelProvider extends PanelProvider
             ->login(Login::class)
             ->navigationItems(self::getNavigationItems())
             ->pages([])
-            ->plugin(ClassicThemePlugin::make())
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

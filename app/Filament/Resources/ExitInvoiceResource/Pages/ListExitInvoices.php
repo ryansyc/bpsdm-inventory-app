@@ -26,6 +26,9 @@ class ListExitInvoices extends ListRecords
         return [
             Actions\CreateAction::make()
                 ->modalHeading('Tambah Barang Keluar')
+                ->icon('heroicon-o-plus')
+                ->label('Tambah')
+                ->createAnother(false)
 
                 ->before(function (array $data) {
                     foreach ($data['exitItems'] as $exitItem) {

@@ -4,8 +4,7 @@ namespace App\Filament\Pages;
 
 class Dashboard extends \Filament\Pages\Dashboard
 {
-    public static function getNavigationIcon(): ?string
-    {
-        return 'heroicon-s-home';
-    }
+    protected static ?string $navigationIcon = 'heroicon-s-home';
+    protected static ?string $navigationLabel = 'Dashboard';
+    protected static ?string $title = 'Dashboard';
 }
