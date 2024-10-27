@@ -21,6 +21,7 @@ use App\Models\Department;
 use App\Filament\Resources\ExitInvoiceResource;
 use Filament\Navigation\NavigationItem;
 use Illuminate\Support\Facades\Auth;
+use Filapanel\ClassicTheme\ClassicThemePlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -32,22 +33,26 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('')
-            ->spa()
             ->sidebarWidth('300px')
+            ->spa()
             ->viteTheme('resources/css/filament/admin/theme.css')
+
+
+            ->authMiddleware([
+                Authenticate::class,
+            ])
             ->colors([
                 'primary' => Color::hex('#027D3D'),
-                'secondary' => Color::hex('#00A8E6'),
-                'tertiary' => Color::hex('#E6AF30'),
+                'secondary' => Color::hex('#00AFEF'),
+                'tertiary' => Color::hex('#FCC134'),
             ])
-            ->login(Login::class)
-            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
-            ->pages([
-                Pages\Dashboard::class,
-            ])
+            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
-            ->widgets([])
+            ->login(Login::class)
+            ->navigationItems(self::getNavigationItems())
+            ->pages([])
+            ->plugin(ClassicThemePlugin::make())
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -58,11 +63,7 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-            ])
-            ->authMiddleware([
-                Authenticate::class,
-            ])
-            ->navigationItems(self::getNavigationItems());
+            ]);
     }
 
     public static function getNavigationItems(): array

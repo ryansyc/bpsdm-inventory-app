@@ -8,4 +8,12 @@ export default {
         "./vendor/filament/**/*.blade.php",
         "./vendor/awcodes/filament-table-repeater/resources/**/*.blade.php",
     ],
+
+    theme: {
+        extend: {
+            colors: {
+                thprimary: "#027D3D",
+            },
+        },
+    },
 };

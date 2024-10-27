@@ -2,3 +2,28 @@
 @import "/vendor/awcodes/filament-table-repeater/resources/css/plugin.css";
 
 @config 'tailwind.config.js';
+
+@layer components {
+    :is(.fi-body) {
+        @apply !bg-gray-50 dark:!bg-gray-950;
+    }
+
+    :is(.fi-sidebar-item-active a) {
+        @apply !bg-thprimary dark:!bg-white/5;
+    }
+
+    :is(
+            .fi-sidebar-item-active .fi-sidebar-item-label,
+            .fi-sidebar-item-active .fi-sidebar-item-icon
+        ) {
+        @apply !text-white dark:!text-primary-400;
+    }
+
+    :is(.fi-ta-header) {
+        @apply !bg-thprimary dark:!bg-gray-950;
+    }
+
+    :is(.fi-ta-header-heading) {
+        @apply !text-white dark:!text-white;
+    }
+}
