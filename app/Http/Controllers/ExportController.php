@@ -12,14 +12,14 @@ class ExportController extends Controller
 {
     public function invoice(Request $request)
     {
-        $filename = 'invoice-' . now()->format('ymdHis') . '.xlsx';
+        $filename = 'nota-' . now()->format('ymdHis') . '.xlsx';
 
         return Excel::download(new InvoicesExport($request->id), $filename);
     }
 
     public function mutation()
     {
-        $filename = 'mutation-' . now()->format('ymdHis') . '.xlsx';
+        $filename = 'mutasi-' . now()->format('ymdHis') . '.xlsx';
 
         return Excel::download(new MutationsExport(), $filename);
     }

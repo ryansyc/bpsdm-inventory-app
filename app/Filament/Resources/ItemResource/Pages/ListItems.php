@@ -22,71 +22,14 @@ class ListItems extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            // Actions\CreateAction::make()
-            //     ->modalHeading('Tambah Barang')
-            //     ->modalWidth('md')
+            Actions\Action::make('mutation')
+                ->button()
+                ->color('primary')
+                ->label('Mutasi')
+                ->icon('heroicon-s-document-arrow-down')
+                ->url(fn() => route('mutation'))
+                ->openUrlInNewTab(),
 
-            //     ->before(function (array $data) {
-            //         // Check if name or code already exists
-            //         if (Item::where('user_id', Auth::id())
-            //             ->where(function ($query) use ($data) {
-            //                 $query->where('name', $data['name'])
-            //                     ->orWhere('code', $data['code']);
-            //             })
-            //             ->exists()
-            //         ) {
-            //             Notification::make()
-            //                 ->title('Barang sudah ada')
-            //                 ->danger()
-            //                 ->send();
-
-            //             $this->halt(); // Stop the creation process
-            //         }
-            //     })
-
-            //     ->mutateFormDataUsing(function (array $data): array {
-            //         $data['entry_date'] = now();
-            //         return $data;
-            //     })
-
-            //     ->using(function (array $data): Model {
-
-            //         $item = Item::create([
-            //             'code' => $data['code'],
-            //             'name' => $data['name'],
-            //             'quantity' => $data['quantity'],
-            //             'price' => $data['price'],
-            //             'total_price' => $data['quantity'] * $data['price'],
-            //             'category_id' => $data['category_id'],
-            //             'user_id' => Auth::id(),
-            //         ]);
-
-            //         ItemEntry::create([
-            //             'entry_date' => $data['entry_date'],
-            //             'item_id' => $item->id,
-            //             'quantity' => $data['quantity'],
-            //             'total_price' => $data['quantity'] * $data['price'],
-            //             'description' => $data['description'],
-            //             'user_id' => Auth::id(),
-            //         ]);
-
-            //         return $item;
-            //     }),
-
-            ExportAction::make()
-                ->label('Export')
-                ->exports([
-                    ExcelExport::make('table')
-                        ->withFilename(date('Y-m-d') . ' - Stok Barang')
-                        ->withColumns([
-                            Column::make('name')
-                                ->heading('Nama Barang'),
-                            Column::make('category.name')
-                                ->heading('Kategori'),
-                            Column::make('quantity')
-                                ->heading('Jumlah'),
-                        ])
-                ]),
         ];
     }
 }
