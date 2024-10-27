@@ -14,9 +14,14 @@
 
     :is(
             .fi-sidebar-item-active .fi-sidebar-item-label,
-            .fi-sidebar-item-active .fi-sidebar-item-icon
+            .fi-sidebar-item-active .fi-sidebar-item-icon,
+
         ) {
         @apply !text-white dark:!text-primary-400;
+    }
+
+    :is(.fi-sidebar-item-active .fi-sidebar-item-grouped-border div) {
+        @apply !bg-white dark:!bg-primary-400;
     }
 
     :is(.fi-ta-header) {

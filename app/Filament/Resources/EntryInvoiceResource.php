@@ -33,7 +33,7 @@ class EntryInvoiceResource extends Resource
 
     protected static ?string $pluralModelLabel = 'barang masuk';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
 
     public static function form(Form $form): Form
     {
@@ -104,7 +104,7 @@ class EntryInvoiceResource extends Resource
                         Forms\Components\TextInput::make('unit_price')
                             ->label('Harga Satuan')
                             ->required()
-                            ->minValue(0)
+                            ->minValue(1)
                             ->numeric()
                             ->live(onBlur: true)
                             ->dehydrated()
@@ -115,7 +115,7 @@ class EntryInvoiceResource extends Resource
                         Forms\Components\TextInput::make('unit_quantity')
                             ->label('Jumlah')
                             ->required()
-                            ->minValue(0)
+                            ->minValue(1)
                             ->numeric()
                             ->live(onBlur: true)
                             ->afterStateUpdated(function (Get $get, Set $set) {

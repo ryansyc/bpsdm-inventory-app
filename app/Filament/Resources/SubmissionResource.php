@@ -27,7 +27,7 @@ class SubmissionResource extends Resource
 
     protected static ?string $pluralModelLabel = 'ajuan barang';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {

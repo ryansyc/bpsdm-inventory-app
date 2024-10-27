@@ -58,24 +58,6 @@ class ListEntryInvoices extends ListRecords
 
                     return $invoice;
                 }),
-
-
-            ExportAction::make()
-                ->label('Export')
-                ->exports([
-                    ExcelExport::make('table')
-                        ->withFilename(date('Y-m-d') . ' - Barang Masuk')
-                        ->withColumns([
-                            Column::make('entry_date')
-                                ->heading('Tanggal Masuk'),
-                            Column::make('item.name')
-                                ->heading('Nama Barang'),
-                            Column::make('quantity')
-                                ->heading('Jumlah'),
-                            Column::make('description')
-                                ->heading('Deskripsi'),
-                        ])
-                ]),
         ];
     }
 

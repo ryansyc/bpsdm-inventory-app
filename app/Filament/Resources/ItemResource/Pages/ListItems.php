@@ -26,7 +26,7 @@ class ListItems extends ListRecords
                 ->button()
                 ->color('primary')
                 ->label('Mutasi')
-                ->icon('heroicon-s-document-arrow-down')
+                ->icon('heroicon-s-document')
                 ->url(fn() => route('mutation'))
                 ->openUrlInNewTab(),
 

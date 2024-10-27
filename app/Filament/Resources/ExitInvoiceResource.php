@@ -139,7 +139,7 @@ class ExitInvoiceResource extends Resource
                         Forms\Components\TextInput::make('unit_price')
                             ->label('Harga Satuan')
                             ->required()
-                            ->minValue(0)
+                            ->minValue(1)
                             ->numeric()
                             ->live(onBlur: true)
                             ->dehydrated()
@@ -150,7 +150,7 @@ class ExitInvoiceResource extends Resource
                         Forms\Components\TextInput::make('unit_quantity')
                             ->label('Jumlah')
                             ->required()
-                            ->minValue(0)
+                            ->minValue(1)
                             ->numeric()
                             ->live(onBlur: true)
                             ->afterStateUpdated(function (Get $get, Set $set) {
@@ -182,16 +182,6 @@ class ExitInvoiceResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('department.name')
                     ->label('Bidang')
-                    ->searchable()
-                    ->sortable()
-                    ->wrap(),
-                Tables\Columns\TextColumn::make('receiver')
-                    ->label('Penerima')
-                    ->searchable()
-                    ->sortable()
-                    ->wrap(),
-                Tables\Columns\TextColumn::make('provider')
-                    ->label('Penyedia')
                     ->searchable()
                     ->sortable()
                     ->wrap(),
@@ -276,11 +266,11 @@ class ExitInvoiceResource extends Resource
                         return $data;
                     }),
 
-                Tables\Actions\Action::make('pdf')
+                Tables\Actions\Action::make('nota')
                     ->button()
                     ->color('primary')
-                    ->label('Export')
-                    ->icon('heroicon-s-document-arrow-down')
+                    ->label('Nota')
+                    ->icon('heroicon-s-document')
                     ->url(fn($record) => route('invoice', $record->id))
                     ->openUrlInNewTab(),
 

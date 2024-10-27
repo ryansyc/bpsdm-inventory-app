@@ -71,7 +71,7 @@ class AdminPanelProvider extends PanelProvider
         $defaultNavigationItems = [
             NavigationItem::make('Barang Keluar')
                 ->icon('heroicon-s-arrow-up-tray')
-                ->sort(4)
+                ->sort(5)
                 ->isActiveWhen(fn() => request()->fullUrlIs(ExitInvoiceResource::getUrl('index', ['id' => Auth::user()->department_id])))
                 ->url(fn() => ExitInvoiceResource::getUrl('index', ['id' => Auth::user()->department_id])),
         ];
