@@ -9,9 +9,6 @@ use App\Models\Item;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Model;
-use pxlrbt\FilamentExcel\Columns\Column;
-use pxlrbt\FilamentExcel\Exports\ExcelExport;
-use pxlrbt\FilamentExcel\Actions\Pages\ExportAction;
 
 class ListEntryInvoices extends ListRecords
 {
@@ -24,6 +21,7 @@ class ListEntryInvoices extends ListRecords
                 ->modalHeading('Tambah Barang Masuk')
                 ->icon('heroicon-o-plus')
                 ->label('Tambah')
+                ->modalWidth('5xl')
                 ->createAnother(false)
 
                 ->mutateFormDataUsing(function (array $data): array {

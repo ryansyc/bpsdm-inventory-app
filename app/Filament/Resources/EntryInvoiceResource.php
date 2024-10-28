@@ -53,11 +53,11 @@ class EntryInvoiceResource extends Resource
                     ->live()
                     ->headers([
                         Header::make('Kode')->width('20%'),
-                        Header::make('Nama')->width('20%'),
+                        Header::make('Nama')->width('30%'),
                         Header::make('Satuan')->width('10%'),
-                        Header::make('Harga Satuan')->width('20%'),
+                        Header::make('Harga Satuan')->width('15%'),
                         Header::make('Jumlah')->width('10%'),
-                        Header::make('Harga')->width('20%'),
+                        Header::make('Harga')->width('15%'),
                     ])
                     ->schema([
                         Forms\Components\TextInput::make('code')

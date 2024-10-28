@@ -28,6 +28,7 @@ class ListExitInvoices extends ListRecords
                 ->modalHeading('Tambah Barang Keluar')
                 ->icon('heroicon-o-plus')
                 ->label('Tambah')
+                ->modalWidth('5xl')
                 ->createAnother(false)
 
                 ->before(function (array $data) {
