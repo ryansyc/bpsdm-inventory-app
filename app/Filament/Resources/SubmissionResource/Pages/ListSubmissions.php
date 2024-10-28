@@ -5,9 +5,6 @@ namespace App\Filament\Resources\SubmissionResource\Pages;
 use App\Filament\Resources\SubmissionResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Submission;
 
 class ListSubmissions extends ListRecords
 {

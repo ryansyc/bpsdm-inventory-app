@@ -3,10 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\SubmissionResource\Pages;
-use App\Filament\Resources\SubmissionResource\RelationManagers;
 use App\Models\Submission;
 use Filament\Forms;
-use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -14,8 +12,6 @@ use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\Department;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class SubmissionResource extends Resource
 {

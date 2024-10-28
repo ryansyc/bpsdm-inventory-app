@@ -25,8 +25,6 @@ use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Get;
-use Filament\Support\Exceptions\Halt;
-use Illuminate\Support\Facades\Log;
 
 class ExitInvoiceResource extends Resource
 {
