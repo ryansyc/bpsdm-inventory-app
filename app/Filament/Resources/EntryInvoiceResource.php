@@ -128,7 +128,7 @@ class EntryInvoiceResource extends Resource
                     ]),
                 Forms\Components\FileUpload::make('file')
                     ->columnSpanFull()
-                    ->directory('uploads/pdf_dokumen')
+                    ->directory('uploads/entry_invoices')
                     ->required()
                     ->getUploadedFileNameForStorageUsing(
                         fn($file): string => now()->format('ymdHis') . '-' . $file->getClientOriginalName()

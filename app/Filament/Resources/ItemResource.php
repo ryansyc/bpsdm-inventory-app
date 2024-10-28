@@ -3,9 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ItemResource\Pages;
-use App\Filament\Resources\ItemResource\RelationManagers;
 use App\Models\Item;
-use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -13,13 +11,7 @@ use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Actions\Action;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 use Filament\Notifications\Notification;
-use Illuminate\Support\Facades\Request;
 
 class ItemResource extends Resource
 {
@@ -144,6 +136,7 @@ class ItemResource extends Resource
 
                 Tables\Actions\DeleteAction::make()
                     ->button()
+                    ->modalHeading('Hapus Barang')
                     ->action(function ($record) {
                         if ($record->quantity > 0) {
                             Notification::make()
