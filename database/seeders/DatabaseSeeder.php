@@ -2,18 +2,11 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-
 use App\Models\Category;
+use App\Models\User;
+use App\Models\Department;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
-use App\Models\ItemCategory;
-use App\Models\Item;
-use App\Models\ItemEntry;
-use App\Models\ItemExit;
-use App\Models\Department;
-use Illuminate\Support\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
@@ -65,49 +58,6 @@ class DatabaseSeeder extends Seeder
             ['code' => '5.1.02.01.0064', 'name' => 'Belanja Pakaian Dinas Lapangan (PDL)']
         ];
 
-        $items = [
-            [
-                'code' => 'ITEM001',
-                'name' => 'Laptop',
-                'unit' => 'pcs',
-                'unit_quantity' => 10,
-                'unit_price' => 1000,
-                'total_price' => 10000
-            ],
-            [
-                'code' => 'ITEM002',
-                'name' => 'Printer',
-                'unit' => 'pcs',
-                'unit_quantity' => 5,
-                'unit_price' => 500,
-                'total_price' => 2500
-            ],
-            [
-                'code' => 'ITEM003',
-                'name' => 'Mouse',
-                'unit' => 'pcs',
-                'unit_quantity' => 20,
-                'unit_price' => 50,
-                'total_price' => 1000
-            ],
-            [
-                'code' => 'ITEM004',
-                'name' => 'Keyboard',
-                'unit' => 'pcs',
-                'unit_quantity' => 15,
-                'unit_price' => 80,
-                'total_price' => 1200
-            ],
-            [
-                'code' => 'ITEM005',
-                'name' => 'Monitor',
-                'unit' => 'pcs',
-                'unit_quantity' => 8,
-                'unit_price' => 300,
-                'total_price' => 2400
-            ],
-        ];
-
         foreach ($departments as $department) {
             Department::create($department);
         }
@@ -118,10 +68,6 @@ class DatabaseSeeder extends Seeder
 
         foreach ($categories as $category) {
             Category::create($category);
-        }
-
-        foreach ($items as $item) {
-            Item::create($item);
         }
     }
 }
