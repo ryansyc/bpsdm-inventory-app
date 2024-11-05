@@ -61,19 +61,15 @@ class ListExitInvoices extends ListRecords
                 })
 
                 ->using(function (array $data): Model {
-                    // Create the invoice
                     $invoice = ExitInvoice::create($data);
 
-                    // Process each exit item
                     foreach ($data['exitItems'] as $exitItem) {
                         $item = Item::where('code', $exitItem['code'])->first();
 
-                        // Deduct the quantity from stock
                         $item->unit_quantity -= $exitItem['unit_quantity'];
                         $item->total_price -= $exitItem['total_price'];
                         $item->save();
 
-                        // Create an exit item record
                         ExitItem::create([
                             'invoice_id' => $invoice->id,
                             'item_id' => $item->id,
@@ -83,7 +79,6 @@ class ListExitInvoices extends ListRecords
                             'total_price' => $exitItem['total_price'],
                         ]);
                     }
-
                     return $invoice;
                 }),
         ];

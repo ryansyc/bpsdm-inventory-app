@@ -20,7 +20,6 @@ class ListItems extends ListRecords
                 ->icon('heroicon-s-document')
                 ->url(fn() => route('mutation'))
                 ->openUrlInNewTab(),
-
         ];
     }
 }

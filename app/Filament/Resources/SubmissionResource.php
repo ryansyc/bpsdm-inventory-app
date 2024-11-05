@@ -3,15 +3,16 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\SubmissionResource\Pages;
+use App\Models\Department;
 use App\Models\Submission;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use App\Models\Department;
 
 class SubmissionResource extends Resource
 {
@@ -33,7 +34,7 @@ class SubmissionResource extends Resource
                 Forms\Components\Select::make('department_id')
                     ->label('Bidang')
                     ->required()
-                    ->options(Department::where('id', '!=', Auth::user()->department_id)->pluck('name', 'id'))
+                    ->options(fn() => Department::where('id', '!=', Auth::user()->department_id)->pluck('name', 'id')->toArray())
                     ->searchable(),
                 Forms\Components\TextInput::make('name')
                     ->label('Nama Lengkap')
@@ -43,16 +44,16 @@ class SubmissionResource extends Resource
                     ->required(),
                 Forms\Components\FileUpload::make('file')
                     ->directory('uploads/submissions')
-                    ->required()
-                    ->getUploadedFileNameForStorageUsing(
-                        fn($file): string => now()->format('ymdHis') . '-' . $file->getClientOriginalName()
-                    ),
+                    ->required(),
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function (Builder $query) {
+                $query->with('department');
+            })
             ->columns([
                 Tables\Columns\TextColumn::make('No')
                     ->rowIndex()
@@ -82,10 +83,6 @@ class SubmissionResource extends Resource
                     ->openUrlInNewTab()
                     ->searchable()
                     ->sortable(),
-
-            ])
-            ->filters([
-                //
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
@@ -101,13 +98,6 @@ class SubmissionResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
     }
 
     public static function getPages(): array

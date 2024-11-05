@@ -63,7 +63,7 @@ class EntryInvoiceResource extends Resource
                         Forms\Components\TextInput::make('code')
                             ->label('Kode')
                             ->required()
-                            ->live(debounce: 500)
+                            ->live()
                             ->afterStateUpdated(function (Get $get, Set $set, $state) {
                                 $item = Item::where('code', $state)->first(['name', 'unit', 'unit_price']);
                                 if ($item) {
@@ -187,7 +187,6 @@ class EntryInvoiceResource extends Resource
                                 fn(Builder $query, $date): Builder => $query->whereDate('date', '<=', $date),
                             );
                     }),
-
                 Filter::make('category')
                     ->form([
                         Select::make('category')

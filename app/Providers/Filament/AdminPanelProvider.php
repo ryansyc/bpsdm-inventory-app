@@ -36,7 +36,6 @@ class AdminPanelProvider extends PanelProvider
             ->spa()
             ->viteTheme('resources/css/filament/admin/theme.css')
 
-
             ->authMiddleware([
                 Authenticate::class,
             ])
