@@ -70,21 +70,20 @@ class EntryInvoiceResource extends Resource
                                     $set('name', $item->name);
                                     $set('unit', $item->unit);
                                     $set('unit_price', $item->unit_price);
-                                    $set('is_disabled', true);
+                                    $set('is_readonly', true);
                                     self::calculateTotal($get, $set);
                                 } else {
                                     $set('name', null);
                                     $set('unit', null);
                                     $set('unit_price', null);
-                                    $set('is_disabled', false);
+                                    $set('is_readonly', false);
                                 }
                             }),
                         Forms\Components\TextInput::make('name')
                             ->label('Nama')
                             ->required()
                             ->live(onBlur: true)
-                            ->dehydrated()
-                            ->disabled(fn(Get $get) => $get('is_disabled'))
+                            ->readOnly(fn(Get $get) => $get('is_readonly'))
                             ->afterStateUpdated(function (Get $get, Set $set, $state) {
                                 $item = Item::where('name', $state)->first(['code', 'unit', 'unit_price']);
                                 if ($item) {
@@ -93,22 +92,20 @@ class EntryInvoiceResource extends Resource
                                     $set('unit_price', $item->unit_price);
                                     self::calculateTotal($get, $set);
                                 } else {
-                                    $set('is_disabled', false);
+                                    $set('is_readonly', false);
                                 }
                             }),
                         Forms\Components\TextInput::make('unit')
                             ->label('Satuan')
                             ->required()
-                            ->dehydrated()
-                            ->disabled(fn(Get $get) => $get('is_disabled')),
+                            ->readOnly(fn(Get $get) => $get('is_readonly')),
                         Forms\Components\TextInput::make('unit_price')
                             ->label('Harga Satuan')
                             ->required()
                             ->minValue(1)
                             ->numeric()
                             ->live(onBlur: true)
-                            ->dehydrated()
-                            ->disabled(fn(Get $get) => $get('is_disabled'))
+                            ->readOnly(fn(Get $get) => $get('is_readonly'))
                             ->afterStateUpdated(function (Get $get, Set $set) {
                                 self::calculateTotal($get, $set);
                             }),
@@ -123,8 +120,7 @@ class EntryInvoiceResource extends Resource
                             }),
                         Forms\Components\TextInput::make('total_price')
                             ->label('Total')
-                            ->disabled()
-                            ->dehydrated()
+                            ->readOnly()
                     ]),
                 Forms\Components\FileUpload::make('file')
                     ->columnSpanFull()

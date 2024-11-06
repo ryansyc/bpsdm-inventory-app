@@ -37,7 +37,7 @@ class ListEntryInvoices extends ListRecords
                     $invoice = EntryInvoice::create($data);
 
                     foreach ($data['entryItems'] as $entryItem) {
-                        $item = Item::where('name', $entryItem['name'])->first();
+                        $item = Item::where('code', $entryItem['code'])->first();
 
                         if ($item) {
                             $item->unit_quantity += $entryItem['unit_quantity'];
@@ -60,10 +60,5 @@ class ListEntryInvoices extends ListRecords
                     return $invoice;
                 }),
         ];
-    }
-
-    protected function getTotalPrice(): string
-    {
-        return $this->item->total_price;
     }
 }

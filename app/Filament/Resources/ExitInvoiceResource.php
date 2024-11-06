@@ -98,13 +98,11 @@ class ExitInvoiceResource extends Resource
                                     $set('name', $item->name);
                                     $set('unit', $item->unit);
                                     $set('unit_price', $item->unit_price);
-                                    $set('is_disabled', true);
                                     self::calculateTotal($get, $set);
                                 } else {
                                     $set('name', null);
                                     $set('unit', null);
                                     $set('unit_price', null);
-                                    $set('is_disabled', false);
                                 }
                             }),
                         Forms\Components\Select::make('name')
@@ -114,39 +112,36 @@ class ExitInvoiceResource extends Resource
                             ->searchable()
                             ->live(onBlur: true)
                             ->options(Item::pluck('name', 'name'))
-                            ->disabled(fn(Get $get) => $get('is_disabled'))
-                            ->dehydrated()
                             ->afterStateUpdated(function (Get $get, Set $set, $state) {
-                                $item = Item::where('name', $state)->first(['code', 'unit', 'unit_price']);
+                                $item = Item::where('name', $state)->first(['code', 'unit', 'unit_price', 'unit_quantity']);
                                 if ($item) {
                                     $set('code', $item->code);
                                     $set('unit', $item->unit);
                                     $set('unit_price', $item->unit_price);
+                                    $set('unit_quantity', $item->unit_quantity);
+                                    $set('max_unit_quantity', $item->unit_quantity);
                                     self::calculateTotal($get, $set);
-                                } else {
-                                    $set('is_disabled', false);
                                 }
                             }),
                         Forms\Components\TextInput::make('unit')
                             ->label('Satuan')
                             ->required()
                             ->dehydrated()
-                            ->disabled(fn(Get $get) => $get('is_disabled')),
+                            ->disabled(),
                         Forms\Components\TextInput::make('unit_price')
                             ->label('Harga Satuan')
                             ->required()
-                            ->minValue(1)
                             ->numeric()
                             ->live(onBlur: true)
                             ->dehydrated()
-                            ->disabled(fn(Get $get) => $get('is_disabled'))
-                            ->afterStateUpdated(function (Get $get, Set $set) {
-                                self::calculateTotal($get, $set);
-                            }),
+                            ->disabled(),
                         Forms\Components\TextInput::make('unit_quantity')
                             ->label('Jumlah')
                             ->required()
                             ->minValue(1)
+                            ->maxValue(function (Get $get) {
+                                return $get('max_unit_quantity'); // Get max value dynamically
+                            })
                             ->numeric()
                             ->live(onBlur: true)
                             ->afterStateUpdated(function (Get $get, Set $set) {
