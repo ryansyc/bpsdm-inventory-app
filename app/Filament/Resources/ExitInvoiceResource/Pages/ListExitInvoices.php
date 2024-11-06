@@ -47,7 +47,7 @@ class ListExitInvoices extends ListRecords
                             $this->halt();
                         }
 
-                        if (!$exitItem['unit_quantity']) {
+                        if (!$exitItem['unit_quantity'] || $exitItem['unit_quantity'] == 0) {
                             Notification::make()
                                 ->title('Jumlah tidak boleh kosong')
                                 ->danger()

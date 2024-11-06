@@ -236,7 +236,7 @@ class EntryInvoiceResource extends Resource
                         $data['entryItems'] = $entryItems->toArray();
 
                         foreach ($data['entryItems'] as $entryItem) {
-                            $item = Item::where('name', $entryItem['name'])->first();
+                            $item = Item::where('code', $entryItem['code'])->first();
                             $item->unit_quantity -= $entryItem['unit_quantity'];
                             $item->total_price -= $entryItem['total_price'];
                             $item->save();
@@ -253,7 +253,7 @@ class EntryInvoiceResource extends Resource
                         $data['total'] = 0;
 
                         foreach ($data['entryItems'] as $entryItem) {
-                            $item = Item::where('name', $entryItem['name'])->first();
+                            $item = Item::where('code', $entryItem['code'])->first();
                             $data['total'] += $entryItem['total_price'];
 
                             if ($item) {
