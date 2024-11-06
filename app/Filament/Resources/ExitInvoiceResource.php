@@ -91,18 +91,22 @@ class ExitInvoiceResource extends Resource
                         Forms\Components\TextInput::make('code')
                             ->label('Kode')
                             ->required()
-                            ->live(debounce: 500)
+                            ->live()
                             ->afterStateUpdated(function (Get $get, Set $set, $state) {
-                                $item = Item::where('code', $state)->first(['name', 'unit', 'unit_price']);
+                                $item = Item::where('code', $state)->first(['name', 'unit', 'unit_price', 'unit_quantity']);
                                 if ($item) {
                                     $set('name', $item->name);
                                     $set('unit', $item->unit);
                                     $set('unit_price', $item->unit_price);
+                                    $set('unit_quantity', $item->unit_quantity);
+                                    $set('max_unit_quantity', $item->unit_quantity);
                                     self::calculateTotal($get, $set);
                                 } else {
                                     $set('name', null);
                                     $set('unit', null);
                                     $set('unit_price', null);
+                                    $set('unit_quantity', null);
+                                    $set('max_unit_quantity', null);
                                 }
                             }),
                         Forms\Components\Select::make('name')
@@ -110,7 +114,7 @@ class ExitInvoiceResource extends Resource
                             ->required()
                             ->placeholder("")
                             ->searchable()
-                            ->live(onBlur: true)
+                            ->live()
                             ->options(Item::pluck('name', 'name'))
                             ->afterStateUpdated(function (Get $get, Set $set, $state) {
                                 $item = Item::where('name', $state)->first(['code', 'unit', 'unit_price', 'unit_quantity']);
@@ -121,26 +125,29 @@ class ExitInvoiceResource extends Resource
                                     $set('unit_quantity', $item->unit_quantity);
                                     $set('max_unit_quantity', $item->unit_quantity);
                                     self::calculateTotal($get, $set);
+                                } else {
+                                    $set('code', null);
+                                    $set('unit', null);
+                                    $set('unit_price', null);
+                                    $set('unit_quantity', null);
+                                    $set('max_unit_quantity', null);
                                 }
                             }),
                         Forms\Components\TextInput::make('unit')
                             ->label('Satuan')
                             ->required()
-                            ->dehydrated()
-                            ->disabled(),
+                            ->readOnly(),
                         Forms\Components\TextInput::make('unit_price')
                             ->label('Harga Satuan')
                             ->required()
                             ->numeric()
-                            ->live(onBlur: true)
-                            ->dehydrated()
-                            ->disabled(),
+                            ->readOnly(),
                         Forms\Components\TextInput::make('unit_quantity')
                             ->label('Jumlah')
                             ->required()
-                            ->minValue(1)
+                            ->minValue(0)
                             ->maxValue(function (Get $get) {
-                                return $get('max_unit_quantity'); // Get max value dynamically
+                                return $get('max_unit_quantity');
                             })
                             ->numeric()
                             ->live(onBlur: true)
@@ -149,8 +156,7 @@ class ExitInvoiceResource extends Resource
                             }),
                         Forms\Components\TextInput::make('total_price')
                             ->label('Total')
-                            ->disabled()
-                            ->dehydrated()
+                            ->readOnly()
                     ]),
             ]);
     }
@@ -165,7 +171,6 @@ class ExitInvoiceResource extends Resource
                     ->rowIndex()
                     ->alignCenter()
                     ->width('60px'),
-
                 Tables\Columns\TextColumn::make('date')
                     ->label('Tanggal')
                     ->dateTime('Y-m-d | H:i:s')

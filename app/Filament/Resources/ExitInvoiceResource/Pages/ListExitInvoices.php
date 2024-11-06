@@ -29,23 +29,29 @@ class ListExitInvoices extends ListRecords
 
                 ->before(function (array $data) {
                     foreach ($data['exitItems'] as $exitItem) {
-                        $exitItem = Item::where('code', $exitItem['code'])->first();
+                        $item = Item::where('code', $exitItem['code'])->first();
 
-                        if (!$exitItem) {
+                        if (!$item) {
                             Notification::make()
                                 ->title('Barang tidak ditemukan')
                                 ->danger()
                                 ->send();
-
                             $this->halt();
                         }
 
-                        if ($exitItem->unit_quantity < $exitItem['unit_quantity']) {
+                        if ($item->unit_quantity < $exitItem['unit_quantity'] || $item->unit_quantity == 0) {
                             Notification::make()
-                                ->title('Stok tidak mencukupi')
+                                ->title("Stok {$item->name} tidak mencukupi")
                                 ->danger()
                                 ->send();
+                            $this->halt();
+                        }
 
+                        if (!$exitItem['unit_quantity']) {
+                            Notification::make()
+                                ->title('Jumlah tidak boleh kosong')
+                                ->danger()
+                                ->send();
                             $this->halt();
                         }
                     }
