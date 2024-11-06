@@ -288,7 +288,7 @@ class ExitInvoiceResource extends Resource
                         $data['exitItems'] = $exitItems->toArray();
 
                         foreach ($data['exitItems'] as $exitItem) {
-                            $item = Item::where('name', $exitItem['name'])->first();
+                            $item = Item::where('code', $exitItem['code'])->first();
                             $item->unit_quantity += $exitItem['unit_quantity'];
                             $item->total_price += $exitItem['total_price'];
                             $item->save();
@@ -305,7 +305,7 @@ class ExitInvoiceResource extends Resource
                         $data['total'] = 0;
 
                         foreach ($data['exitItems'] as $exitItem) {
-                            $item = Item::where('name', $exitItem['name'])->first();
+                            $item = Item::where('code', $exitItem['code'])->first();
                             $data['total'] += $exitItem['total_price'];
 
                             if ($item) {

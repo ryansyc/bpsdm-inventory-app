@@ -9,6 +9,7 @@ use App\Models\Item;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Notifications\Notification;
 
 class ListEntryInvoices extends ListRecords
 {
