@@ -7,7 +7,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Component;
 use Filament\Pages\Auth\Login as BaseAuth;
 use Illuminate\Validation\ValidationException;
-use Filament\Notifications\Notification; // Import the Notification class
+use Filament\Notifications\Notification;
 
 class Login extends BaseAuth
 {

@@ -3,9 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ExitInvoiceResource\Pages;
-use App\Filament\Resources\ExitInvoiceResource\RelationManagers;
 use App\Models\Category;
-use App\Models\User;
 use App\Models\Item;
 use App\Models\Submission;
 use Filament\Forms;

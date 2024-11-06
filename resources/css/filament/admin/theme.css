@@ -25,7 +25,7 @@
     }
 
     :is(.fi-ta-header) {
-        @apply !bg-thprimary dark:!bg-gray-950;
+        @apply !bg-thprimary dark:!bg-thprimary;
     }
 
     :is(.fi-ta-header-heading) {
