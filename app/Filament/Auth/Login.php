@@ -42,11 +42,10 @@ class Login extends BaseAuth
 
     protected function throwFailureValidationException(): never
     {
-        // Show a notification for invalid login
         Notification::make()
             ->title('Login Failed')
             ->body(__('Invalid username or password. Please try again.')) // Custom error message
-            ->danger() // Set notification style to danger
+            ->danger()
             ->send();
 
         throw ValidationException::withMessages([
