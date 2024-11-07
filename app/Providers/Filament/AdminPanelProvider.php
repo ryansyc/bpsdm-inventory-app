@@ -73,17 +73,20 @@ class AdminPanelProvider extends PanelProvider
                 ->url(fn() => ExitInvoiceResource::getUrl('index', ['id' => Auth::user()->department_id])),
         ];
 
-        $customNavigationItems = Department::all()
-            ->map(
-                fn(Department $department) => NavigationItem::make($department->name)
-                    ->group('Bidang')
-                    // ->icon('heroicon-s-building-office-2')
-                    ->isActiveWhen(fn() => request()->fullUrlIs(ExitInvoiceResource::getUrl('index', ['id' => $department->id])))
-                    ->url(fn() => ExitInvoiceResource::getUrl('index', ['id' => $department->id]))
-                    ->visible(fn() => Auth::user()->department_id !== $department->id)
-            )
-            ->toArray();
+        if (Department::exists()) {
+            $customNavigationItems = Department::all()
+                ->map(
+                    fn(Department $department) => NavigationItem::make($department->name)
+                        ->group('Bidang')
+                        ->isActiveWhen(fn() => request()->fullUrlIs(ExitInvoiceResource::getUrl('index', ['id' => $department->id])))
+                        ->url(fn() => ExitInvoiceResource::getUrl('index', ['id' => $department->id]))
+                        ->visible(fn() => Auth::user()->department_id !== $department->id)
+                )
+                ->toArray();
 
-        return array_merge($defaultNavigationItems, $customNavigationItems);
+            return array_merge($defaultNavigationItems, $customNavigationItems);
+        }
+
+        return $defaultNavigationItems;
     }
 }
