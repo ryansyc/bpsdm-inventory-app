@@ -5,7 +5,6 @@ namespace App\Providers\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -21,6 +20,8 @@ use App\Models\Department;
 use App\Filament\Resources\ExitInvoiceResource;
 use Filament\Navigation\NavigationItem;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -73,7 +74,13 @@ class AdminPanelProvider extends PanelProvider
                 ->url(fn() => ExitInvoiceResource::getUrl('index', ['id' => Auth::user()->department_id])),
         ];
 
-        if (Department::exists()) {
+        try {
+            DB::connection()->getPdo();
+        } catch (\Exception $e) {
+            return $defaultNavigationItems;
+        }
+
+        if (Schema::hasTable('departments')) {
             $customNavigationItems = Department::all()
                 ->map(
                     fn(Department $department) => NavigationItem::make($department->name)
